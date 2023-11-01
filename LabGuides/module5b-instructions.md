@@ -25,7 +25,7 @@
     - [Background](#background)
     - [Task 1 - Create repos for the remaining microservices](#task-1---create-repos-for-the-remaining-microservices)
     - [Task 2 - Initialize git, check in the source code and push it to GitHub (For all the repos, excluding the NodeJS step and web repo)](#task-2---initialize-git-check-in-the-source-code-and-push-it-to-github-for-all-the-repos-excluding-the-nodejs-step-and-web-repo)
-    - [Task 3 - Add the same secrets you added in the Exercise: Create GitHub secrets](#task-3---add-the-same-secrets-you-added-in-the-exercise-create-github-secrets)
+    - [Task 3 - Add the same secrets you added in the Exercise: Create the Secrets for the GitHub repo](#task-3---add-the-same-secrets-you-added-in-the-exercise-create-the-secrets-for-the-github-repo)
     - [Task 4 - Create a GitHub Token](#task-4---create-a-github-token)
     - [Task 5 - Create a new GitHub Action for the step repos](#task-5---create-a-new-github-action-for-the-step-repos)
     - [Task 6 - Configure the service principal to access the Key Vault created in Lab 4, Exercise 1, Task 2 to be used by your workflows](#task-6---configure-the-service-principal-to-access-the-key-vault-created-in-lab-4-exercise-1-task-2-to-be-used-by-your-workflows)
@@ -44,11 +44,11 @@ Use the same ACR, Azure Key Vault and AKS cluster you created for **Lab 4**.
 
 1. If you don't already have access to a GitHub account, navigate to: <https://github.com>
 
-1. Click on sign up.
+2. Click on sign up.
 
-1. Use an email of your choice to create an account.
+3. Use an email of your choice to create an account.
 
-1. Login to your new account.
+4. Login to your new account.
 
 ### Task 2 - Create a ssh key
 
@@ -64,15 +64,15 @@ ssh-keygen -C "myemail@mycompany.com"
 
 1. If you haven't already done so, login to your GitHub account.
 
-1. Select your avatar in the upper right of the user interface and then click on **Settings** in the menu that appears.
+2. Select your avatar in the upper right of the user interface and then click on **Settings** in the menu that appears.
 
 ![](content/ghselect-ssh-public-keys1.png)
 
-1. Click on **SSH and GPG keys** and **New SSH key**.
+3. Click on **SSH and GPG keys** and **New SSH key**.
 
 ![](content/ghselect-ssh-public-keys2.png)
 
-1. Copy the content of the public key (for example, id_rsa.pub) that you generated in your local.
+4. Copy the content of the public key (for example, id_rsa.pub) that you generated in your local.
 
 ```PowerShell
 cat C:\Users\pabloam\.ssh\id_rsa.pub
@@ -80,7 +80,7 @@ cat C:\Users\pabloam\.ssh\id_rsa.pub
 
 ![](content/ghsshkey.png)
 
-1. Name it as ssh key in the **Title section** and paste the content in the **Key** section. Finally, click on **Add SSH key**.
+5. Name it as ssh key in the **Title section** and paste the content in the **Key** section. Finally, click on **Add SSH key**.
 
 ![](content/ghssh_key_input.png)
 
@@ -94,7 +94,7 @@ cat C:\Users\pabloam\.ssh\id_rsa.pub
 cd C:\k8s\Labs\MathTrick\Chained\MT3Chained-Web
 ```
 
-1. Initialize git and check in the source code.
+2. Initialize git and check in the source code.
 
 ```PowerShell
 git init
@@ -112,17 +112,17 @@ The shell should look like this:
 
 ![](content/ghrepo.png)
 
-1. Create a new repository called "MT3Chained-Web". **CHECK "Private"** and click on **Create Repository** button.
+2. Create a new repository called "MT3Chained-Web". **CHECK "Private"** and click on **Create Repository** button.
 
-1. In the next window copy the following commands.
+3. In the next window copy the following commands.
 
 ![](content/ghmt3chained-web-repo.png)
 
-1. Go back to your Windows Terminal and paste those contents and enter yes.
+4. Go back to your Windows Terminal and paste those contents and enter yes.
 
 ![](content/ghgit-pushed.png)
 
-1. Refresh the GitHub page, you should see your local files.
+5. Refresh the GitHub page, you should see your local files.
 
 ![](content/ghrepo3.png)
 
@@ -138,11 +138,11 @@ We will create the secrets with Service Principal values, so first we must creat
 Connect-AzAccount
 ```
 
-1. Use your user email and password.
+2. Use your user email and password.
 
 ![](content/ghpslogin.png)
 
-1. Create a Service Principal and assign it the Contributor role in your resource group (AKS Resource Group). You just have to copy the following Azure PowerShell code and paste it in the Windows Terminal.
+3. Create a Service Principal and assign it the Contributor role in your resource group (AKS Resource Group). You just have to copy the following Azure PowerShell code and paste it in the Windows Terminal.
 
 ```PowerShell
 $resourceGroupId = (Get-AzResourceGroup -Name $AKS_RESOURCE_GROUP).ResourceId
@@ -168,11 +168,11 @@ $output = @{
 $output | ConvertTo-Json
 ```
 
-1. The script output should look like this:
+4. The script output should look like this:
 
 ![](content/ghpsscriptoutput.png)
 
-1. Copy the script output in a .txt file, since it will be used in the next steps.
+5. Copy the script output in a .txt file, since it will be used in the next steps.
 
 You've created the service principal. Next, create secrets in the GitHub Repository.
 
@@ -180,17 +180,17 @@ You've created the service principal. Next, create secrets in the GitHub Reposit
 
 1. In your browser, navigate to your GitHub repository (**MT3Chained-Web**).
 
-1. Select Settings > Secrets > Actions.
+2. Select Settings > Secrets > Actions.
 
-1. Select New repository secret.
+3. Select New repository secret.
 
 ![](content/ghgithubsecrets.png)
 
-1. Name the secret as **AZURE_CREDENTIALS**.
+4. Name the secret as **AZURE_CREDENTIALS**.
 
-1. In the **Value** field, paste the JSON object that you copied in the .txt file in the previous section.
+5. In the **Value** field, paste the JSON object that you copied in the .txt file in the previous section.
 
-1. Click **Add secret**.
+6. Click **Add secret**.
 
 ![](content/ghgithubsecret1.png)
 
@@ -198,21 +198,21 @@ You've created the service principal. Next, create secrets in the GitHub Reposit
 
 1. Select New repository secret.
 
-1. Name the secret as **ACR_CLIENT_ID**.
+2. Name the secret as **ACR_CLIENT_ID**.
 
-1. In the **Value** field, paste the **"clientId"** value of the JSON object that you copied in the previous section in the .txt file.
+3. In the **Value** field, paste the **"clientId"** value of the JSON object that you copied in the previous section in the .txt file.
 
-1. Select **Add secret**.
+4. Select **Add secret**.
 
 ![](content/ghacrclientidsecret.png)
 
-1. Select New repository secret.
+5. Select New repository secret.
 
-1. Name the secret as **ACR_CLIENT_PASSWORD**.
+6. Name the secret as **ACR_CLIENT_PASSWORD**.
 
-1. In the **Value** field, paste the **"clientSecret"** value of the JSON object that you copied in the previous section in the .txt file.
+7. In the **Value** field, paste the **"clientSecret"** value of the JSON object that you copied in the previous section in the .txt file.
 
-1. Click **Add secret**.
+8. Click **Add secret**.
 
 ![](content/ghacrclientpasswordsecret.png)
 
@@ -274,19 +274,19 @@ on:
       - main
 ```
 
-1. Obtain the Azure Container Registry Server Name.
+2. Obtain the Azure Container Registry Server Name.
 
 ```PowerShell
 $ACR_SERVER_NAME=(az acr show -n $ACR_NAME --query loginServer -o tsv)
 ```
 
-1. Create the **\.github\workflows** folder in the path **C:\k8s\Labs\MathTrick\Chained\MT3Chained-Web**.
+3. Create the **\.github\workflows** folder in the path **C:\k8s\Labs\MathTrick\Chained\MT3Chained-Web**.
 
 ```PowerShell
 New-Item -Path "C:\k8s\Labs\MathTrick\Chained\MT3Chained-Web\.github\workflows" -ItemType Directory
 ```
 
-1. Replace the **workflow-web1.yaml** file with the correct values and create the right file **workflow.yaml** in the right path.
+4. Replace the **workflow-web1.yaml** file with the correct values and create the right file **workflow.yaml** in the right path.
 
 ```PowerShell
 $Path1="C:\k8s\Labs\Module5\workflows"
@@ -299,7 +299,7 @@ $destination_file = (Join-Path $Path2 workflow.yaml)
     } | Set-Content $destination_file
 ```
 
-1. Push the changes to your GitHub Repository.
+5. Push the changes to your GitHub Repository.
 
 ```PowerShell
 git add .
@@ -307,21 +307,21 @@ git commit -m "Create the workflow.yaml"
 git push
 ```
 
-1. Now you can see your GitHub Action in the Actions tab of your Repository.
+6. Now you can see your GitHub Action in the Actions tab of your Repository.
 
 ![](content/ghgithubactions1.png)
 
-1. Click on **Create the workflow.yaml** and then click on build, you can see all the steps of your job.
+7. Click on **Create the workflow.yaml** and then click on build, you can see all the steps of your job.
 
 ![](content/ghgithubactions2.png)
 
 > This GitHub Action build an image with a Dockerfile and push that image to your Azure Container Registry, the name of the image is specified in the Environment variable **APP_NAME: mt3chained-web**, and the image tag is the **github.run_number**.
 
-1. Go to the Azure Portal and check your Azure Container Registry Repositories.
+8. Go to the Azure Portal and check your Azure Container Registry Repositories.
 
 ![](content/ghacr.png)
 
-1. Click on the **mt3chained-web** Repository and you can see your tag.
+9. Click on the **mt3chained-web** Repository and you can see your tag.
 
 ![](content/ghacrtag.png)
 
@@ -334,7 +334,7 @@ git push
 ```
 > **`NOTE:`** This script replaces the string **## \<latestTag> ##** in the workflow.yaml with the right code to add the latest image tag.
 
-1. Push the changes to your GitHub Repository.
+2. Push the changes to your GitHub Repository.
 
 ```PowerShell
 git add .
@@ -342,15 +342,15 @@ git commit -m "Update the image tags in the workflow.yaml"
 git push
 ```
 
-1. Now you can see your new workflow run in the Actions tab of your GitHub Repository.
+3. Now you can see your new workflow run in the Actions tab of your GitHub Repository.
 
 ![](content/ghgithubactions3.png)
 
-1. Go to the Azure Portal and check your Azure Container Registry Repositories.
+4. Go to the Azure Portal and check your Azure Container Registry Repositories.
 
 ![](content/ghacr.png)
 
-1. Click on the **mt3chained-web** Repository and you can see the two new tags (the tag **2** appears because you run the workflow.yaml again, so it creates a new **github.run_number**).
+5. Click on the **mt3chained-web** Repository and you can see the two new tags (the tag **2** appears because you run the workflow.yaml again, so it creates a new **github.run_number**).
 
 ![](content/ghacrtag2.png)
 
@@ -425,7 +425,7 @@ jobs:
           namespace: ${{ env.NAMESPACE }}
 ```
 
-1. Copy the next script in the terminal to replace the **workflow-web2.yaml** file with the right values and copy the content to the right file called **(workflow.yaml)** in the right path **(C:\k8s\Labs\MathTrick\Chained\MT3Chained-Web\\.github\workflows)**.
+2. Copy the next script in the terminal to replace the **workflow-web2.yaml** file with the right values and copy the content to the right file called **(workflow.yaml)** in the right path **(C:\k8s\Labs\MathTrick\Chained\MT3Chained-Web\\.github\workflows)**.
 
 ```PowerShell
 $Path1="C:\k8s\Labs\Module5\workflows"
@@ -441,7 +441,7 @@ $destination_file = (Join-Path $Path2 workflow.yaml)
     } | Set-Content $destination_file
 ```
 
-1. Now replace in the manifest **k8s-deployment.yaml** the server name of your ACR.
+3. Now replace in the manifest **k8s-deployment.yaml** the server name of your ACR.
 
 ![](content/ghdeployment1.png)
 
@@ -452,7 +452,7 @@ $Path="C:\k8s\Labs\MathTrick\Chained\MT3Chained-Web"
 (Get-Content (Join-Path $Path k8s-deployment.yaml)).replace("somecontainerrepo", $ACR_SERVER_NAME) | Set-Content (Join-Path $Path k8s-deployment.yaml)
 ```
 
-1. Push the changes to your GitHub Repository.
+4. Push the changes to your GitHub Repository.
 
 ```PowerShell
 git add .
@@ -460,25 +460,25 @@ git commit -m "Update the the workflow.yaml and k8s-deployment.yaml"
 git push
 ```
 
-1. Now you can see your new workflow run in the Actions tab of your GitHub Repository.
+5. Now you can see your new workflow run in the Actions tab of your GitHub Repository.
 
 ![](content/ghgithubactions4.png)
 
-1. Copy the next command in the terminal to check your cluster for the expected resources:
+6. Copy the next command in the terminal to check your cluster for the expected resources:
 
 ```PowerShell
 kubectl get all
 ```
 
-1. The output should look like this:
+7. The output should look like this:
 
 ![](content/ghkubectl.png)
 
-1. Once the EXTERNAL-IP for the "service/mt3chained-web" has been assigned a value (you may have to wait a few minutes), open a browser and enter that IP address in your address bar:
+8. Once the EXTERNAL-IP for the "service/mt3chained-web" has been assigned a value (you may have to wait a few minutes), open a browser and enter that IP address in your address bar:
 
 ![](content/ghapp.png)
 
-1. Verify that the correct image was deployed
+9. Verify that the correct image was deployed
 
 ```PowerShell
 kubectl get pods -o jsonpath="{.items[*].spec.containers[*].image}"
@@ -490,15 +490,15 @@ You should see the full name of the image:
 acrpacyowrfzcd.azurecr.io/mt3chained-web:3
 ```
 
-1. Return to the Windows Terminal in the MT3Chained-Web folder.
+10. Return to the Windows Terminal in the MT3Chained-Web folder.
 
-1. Create a simple file just to trigger a change in the main branch.
+11. Create a simple file just to trigger a change in the main branch.
 
 ```PowerShell
 echo "Hello" > text.txt
 ```
 
-1. Commit and push your changes.
+12. Commit and push your changes.
 
 ```PowerShell
 git add .
@@ -506,7 +506,7 @@ git commit -m "Add a test file"
 git push
 ```
 
-1. Wait a few minutes and verify the deployed container in AKS has automatically updated. Verify what image was deployed
+13. Wait a few minutes and verify the deployed container in AKS has automatically updated. Verify what image was deployed
 
 ```PowerShell
 kubectl get pods -o jsonpath="{.items[*].spec.containers[*].image}"
@@ -583,15 +583,15 @@ In the previous exercise, you created a repository for the Web microservice. In 
 
 ![](content/ghgithubhome.png)
 
-1. Create a new repository called "MT3Chained-Step1". **CHECK "Private"** and click the **Create Repository** button.
+2. Create a new repository called "MT3Chained-Step1". **CHECK "Private"** and click the **Create Repository** button.
 
 ![](content/ghcreate-repo-2.png)
 
-1. Repeat the process for the other services, including the Node JS service, but excluding the *Helm* folder (for now).
+3. Repeat the process for the other services, including the Node JS service, but excluding the *Helm* folder (for now).
 
 ![](content/ghall-services.png)
 
-1. When you're done, your list should look like this:
+4. When you're done, your list should look like this:
 
 ![](content/ghrepos-all.png)
 
@@ -614,13 +614,13 @@ ForEach ($i in 1..5) {
 }
 ```
 
-1. Return back to the GitHub.  Select for example the **MT3Chained-Step1** repo, you should see all your files (the same for all the step repos).
+2. Return back to the GitHub.  Select for example the **MT3Chained-Step1** repo, you should see all your files (the same for all the step repos).
 
 ![](content/ghrepo-files-step1.png)
 
-1. Create two new repos called "**Math Trick 3 - Chained**" and "**MathTrickCore**" following the same steps for the others that you created.  Use the "**Math Trick 3 - Chained**" repo to store the contents of the "**Helm**" folder and use the "**MathTrickCore**" repo to store the contents of the "**MathTrickCore**" folder.
+3. Create two new repos called "**Math Trick 3 - Chained**" and "**MathTrickCore**" following the same steps for the others that you created.  Use the "**Math Trick 3 - Chained**" repo to store the contents of the "**Helm**" folder and use the "**MathTrickCore**" repo to store the contents of the "**MathTrickCore**" folder.
 
-1. Initialize git, check in the source code and push it to GitHub for the **Math-Trick-3---Chained** repo.
+4. Initialize git, check in the source code and push it to GitHub for the **Math-Trick-3---Chained** repo.
 
 ```PowerShell
 cd "C:\k8s\Labs\MathTrick\Chained\Helm"
@@ -632,7 +632,7 @@ git branch -M main
 git push -u origin main
 ```
 
-1. Initialize git, check in the source code and push it to GitHub for the **MathTrickCore** repo.
+5. Initialize git, check in the source code and push it to GitHub for the **MathTrickCore** repo.
 
 ```PowerShell
 cd "C:\k8s\Labs\MathTrick\MathTrickCore"
@@ -644,21 +644,21 @@ git branch -M main
 git push -u origin main
 ```
 
-1. Now, for example you should see all the Helm files in the Math-Trick-3---Chained repo (the same for the MathTrickCore repo)
+6. Now, for example you should see all the Helm files in the Math-Trick-3---Chained repo (the same for the MathTrickCore repo)
 
 ![](content/ghrepo-helm.png)
 
-### Task 3 - Add the same secrets you added in the [Exercise: Create GitHub secrets](#exercise-create-github-secrets)
+### Task 3 - Add the same secrets you added in the [Exercise: Create the Secrets for the GitHub repo](#exercise-create-the-secrets-for-the-github-repo)
 
 1. For the *step* and *Step2-NodeJS* repos create the **ACR_CLIENT_ID** and **ACR_CLIENT_PASSWORD** secrets for the ACR authentication and **AZURE_CREDENTIALS** secret for the Azure Key Vault Authentication (Then we will assign the access policies to the Service Principal created). You can use the following links if you don't remember how to create the secrets:
 
-[Task 2 - Create GitHub secret to manage the AKS cluster and the Azure Key Vault](#task-2---create-gitHub-secret-to-manage-the-aks-cluster-and-the-azure-key-vault)
+[Task 2 - Create the GitHub Action Secret to manage the AKS cluster and the Azure Key Vault](#task-2---create-the-github-action-secret-to-manage-the-aks-cluster-and-the-azure-key-vault)
 
-[Task 3 - Create GitHub secrets for the Azure Container Registry Authentication](#task-3---create-gitHub-secrets-for-the-azure-container-registry-authentication)
+[Task 3 - Create the GitHub Actions Secrets for the Azure Container Registry Authentication](#task-3---create-the-github-actions-secrets-for-the-azure-container-registry-authentication)
 
-1. For the *Math-Trick-3---Chained* repo create the **AZURE_CREDENTIALS** secret for the Azure Key Vault and AKS Authentication. You can use the following link if you don't remember how to create the secret:
+2. For the *Math-Trick-3---Chained* repo create the **AZURE_CREDENTIALS** secret for the Azure Key Vault and AKS Authentication. You can use the following link if you don't remember how to create the secret:
 
-[Task 2 - Create GitHub secret to manage the AKS cluster and the Azure Key Vault](#task-2---create-gitHub-secret-to-manage-the-aks-cluster-and-the-azure-key-vault)
+[Task 2 - Create the GitHub Action Secret to manage the AKS cluster and the Azure Key Vault](#task-2---create-the-github-action-secret-to-manage-the-aks-cluster-and-the-azure-key-vault)
 
 ### Task 4 - Create a GitHub Token
 
@@ -668,39 +668,39 @@ Create a github token to use in the workflow.yaml of each step repos to access t
 
 ![](content/ghselect-ssh-public-keys1.png)
 
-1. In the left sidebar, click Developer settings.
+2. In the left sidebar, click Developer settings.
 
 ![](content/ghtoken1.png)
 
-1. In the left sidebar, click Personal access tokens.
+3. In the left sidebar, click Personal access tokens.
 
 ![](content/ghtoken2.png)
 
-1. Click Generate new token.
+4. Click Generate new token.
 
 ![](content/ghtoken3.png)
 
-1. Give your token a descriptive name.
+5. Give your token a descriptive name.
 
 ![](content/ghtoken4.png)
 
-1. To give your token an expiration, select the Expiration drop-down menu, then click a default or use the calendar picker.
+6. To give your token an expiration, select the Expiration drop-down menu, then click a default or use the calendar picker.
 
 ![](content/ghtoken5.png)
 
-1. Select the scopes, or permissions, you'd like to grant this token. To use your token to access other repositories, select repo.
+7. Select the scopes, or permissions, you'd like to grant this token. To use your token to access other repositories, select repo.
 
 ![](content/ghtoken6.png)
 
-1. Click Generate token.
+8. Click Generate token.
 
 ![](content/ghtoken7.png)
 
-1. Copy the token in a .txt file, it will be used to create a secret.
+9. Copy the token in a .txt file, it will be used to create a secret.
 
-1. Create a Action Secret for all the ***step*** repos (including the **NodeJS step** and the **web** repo). Not all of them require the secret at this point, but they will in later Tasks. **Do not create the secret for *MathTrickCore* and the *Math-Trick-3---Chained* repos, as those projects don't need it.**
+10. Create a Action Secret for all the ***step*** repos (including the **NodeJS step** and the **web** repo). Not all of them require the secret at this point, but they will in later Tasks. **Do not create the secret for *MathTrickCore* and the *Math-Trick-3---Chained* repos, as those projects don't need it.**
 
-1. For example how to create the **PAT_GITHUB** secret for the *MT3Chained-Step1* repo, just copy the token which was created before and paste it in the Value section.
+11. For example how to create the **PAT_GITHUB** secret for the *MT3Chained-Step1* repo, just copy the token which was created before and paste it in the Value section.
 
 ![](content/ghtoken-secret.png)
 
@@ -769,7 +769,7 @@ ForEach ($i in 1..5) {
 }
 ```
 
-1. Copy the following Azure PowerShell code in the Windows Terminal to replace the **workflow-steps1.yaml** file in the path **C:\k8s\Labs\Module5\workflows** with the correct values and give it the correct file name **(workflow.yaml)** copying it in **\\.github\workflows\\** folder of each step repo (excluding the NodeJS step and web repo).
+2. Copy the following Azure PowerShell code in the Windows Terminal to replace the **workflow-steps1.yaml** file in the path **C:\k8s\Labs\Module5\workflows** with the correct values and give it the correct file name **(workflow.yaml)** copying it in **\\.github\workflows\\** folder of each step repo (excluding the NodeJS step and web repo).
 
 ```PowerShell
 ForEach ($i in 1..5) {
@@ -794,7 +794,7 @@ ForEach ($i in 1..5) {
 }
 ```
 
-1. After all the builds have completed, verify all the images have been created in the ACR.
+3. After all the builds have completed, verify all the images have been created in the ACR.
 
 ![](content/ghall-step-images.png)
 
@@ -812,11 +812,11 @@ az keyvault set-policy --name $KV_NAME `
                        --secret-permissions delete get list set
 ```
 
-1. Open the Azure Portal, go to the Key Vault and click on **Access policies** to verify the access policy was created
+2. Open the Azure Portal, go to the Key Vault and click on **Access policies** to verify the access policy was created
 
 ![](content/ghaccess-policy.png)
 
-1. Create the default image tags secrets for all the images.  Set the default tags to *latest* so you can use them until they're replaced with the build numbers in the pipelines
+3. Create the default image tags secrets for all the images.  Set the default tags to *latest* so you can use them until they're replaced with the build numbers in the pipelines
 
 ```PowerShell
 az keyvault secret set --vault-name $KV_NAME --name "mt3chained-step1-tag" --value "latest"
@@ -828,7 +828,7 @@ az keyvault secret set --vault-name $KV_NAME --name "mt3chained-step5-tag" --val
 az keyvault secret set --vault-name $KV_NAME --name "mt3chained-web-tag" --value "latest"
 ```
 
-1. On the Key Vault in the Azure Portal, click on **Secrets** to verify they were all created (you may need to click *Refresh*)
+4. On the Key Vault in the Azure Portal, click on **Secrets** to verify they were all created (you may need to click *Refresh*)
 
 ![](content/ghsecrets-defaults.png)
 
@@ -836,7 +836,7 @@ az keyvault secret set --vault-name $KV_NAME --name "mt3chained-web-tag" --value
 
 1. Edit the build workflow.yaml create in Task 5.
 
-1. Add 2 env variables.
+2. Add 2 env variables.
 
 ```yaml
   KV_NAME: <keyVaultName>
@@ -845,7 +845,7 @@ az keyvault secret set --vault-name $KV_NAME --name "mt3chained-web-tag" --value
 
 > Notice the *secretTagName* will match the secret name created in the previous task.
 
-1. Add another task to the end of your workflow. The workflow will execute the same **az keyvault secret set** command that you executed above, except the *value* will be set to the current build tag (**github.run_number**).
+3. Add another task to the end of your workflow. The workflow will execute the same **az keyvault secret set** command that you executed above, except the *value* will be set to the current build tag (**github.run_number**).
 
 ```yaml
       - name: Azure login
@@ -856,7 +856,7 @@ az keyvault secret set --vault-name $KV_NAME --name "mt3chained-web-tag" --value
           az keyvault secret set --vault-name ${{ env.KV_NAME }} --name ${{ env.SECRET_NAME }} --value ${{ github.run_number }}
 ```
 
-1. Create the new **workflow.yaml** in the the directory of all the step repos **\\.github\workflows\\** from the **workflow-steps2.yaml** file, in the directory **C:\k8s\Labs\Module5\workflows**, with the following content:
+4. Create the new **workflow.yaml** in the the directory of all the step repos **\\.github\workflows\\** from the **workflow-steps2.yaml** file, in the directory **C:\k8s\Labs\Module5\workflows**, with the following content:
 
 ```yaml
 name: <githubRepoName>
@@ -915,7 +915,7 @@ jobs:
           az keyvault secret set --vault-name ${{ env.KV_NAME }} --name ${{ env.SECRET_NAME }} --value ${{ github.run_number }}
 ```
 
-1. Copy the following Azure PowerShell code in the Windows Terminal to replace the **workflow-steps2.yaml** file in the path **C:\k8s\Labs\Module5\workflows** with the correct values and replace the file **(workflow.yaml)** in **\\.github\workflows\\** folder of each step repo (excluding the NodeJS step and web repo).
+5. Copy the following Azure PowerShell code in the Windows Terminal to replace the **workflow-steps2.yaml** file in the path **C:\k8s\Labs\Module5\workflows** with the correct values and replace the file **(workflow.yaml)** in **\\.github\workflows\\** folder of each step repo (excluding the NodeJS step and web repo).
 
 ```PowerShell
 ForEach ($i in 1..5) {
@@ -941,15 +941,15 @@ ForEach ($i in 1..5) {
 }
 ```
 
-1. When the build completes successfully, go to the Azure Portal and look up the secrets in the key vault, click on the *mt3chained-step1-tag* secret for example.
+6. When the build completes successfully, go to the Azure Portal and look up the secrets in the key vault, click on the *mt3chained-step1-tag* secret for example.
 
-1. Click on the link below the **CURRENT VERSION** of the secret.  Click the **Show Secret Value** button
+7. Click on the link below the **CURRENT VERSION** of the secret.  Click the **Show Secret Value** button
 
-1. The latest build tag should be in the value of the secret.
+8. The latest build tag should be in the value of the secret.
 
 ![](content/ghsecret-value.png)
 
-1. Which should match the last *github.run_number* tag in the ACR repository *mt3chained-step1*.
+9. Which should match the last *github.run_number* tag in the ACR repository *mt3chained-step1*.
 
 ![](content/ghacr-image-tag.png)
 
@@ -957,7 +957,7 @@ ForEach ($i in 1..5) {
 
 1. The process is similar to the one followed in Task 7 above. We will create a workflow for the *MT3Chained Web* and the *MT3Chained-Step2-NodeJS* repos. This workflow's structure will be simpler than the structure of the ***step*** repositories, since these are self contained projects and don't require the obtention of dependencies of the *MathTrickCore* repo.
 
-1. To create the new **workflow.yaml** in the the directory **\\.github\workflows\\** of *MT3Chained-Web* and the *MT3Chained-Step2-NodeJS* repos you will use the **workflow-web3.yaml** file, in the directory **C:\k8s\Labs\Module5\workflows**. It has 3 main steps: checkout, login into Azure, and image build and upload, and finally store the tag as a secret in the Azure Key Vault.
+2. To create the new **workflow.yaml** in the the directory **\\.github\workflows\\** of *MT3Chained-Web* and the *MT3Chained-Step2-NodeJS* repos you will use the **workflow-web3.yaml** file, in the directory **C:\k8s\Labs\Module5\workflows**. It has 3 main steps: checkout, login into Azure, and image build and upload, and finally store the tag as a secret in the Azure Key Vault.
 
 ```yaml
 name: <githubRepoName>
@@ -1005,7 +1005,7 @@ jobs:
           az keyvault secret set --vault-name ${{ env.KV_NAME }} --name ${{ env.SECRET_NAME }} --value ${{ github.run_number }}
 ```
 
-1. Copy the following Azure PowerShell code in the Windows Terminal to replace the **workflow-web3.yaml** file in the path **C:\k8s\Labs\Module5\workflows** with the correct values and replace the **(workflow.yaml)** file with the new content in the **\\.github\workflows\\** folder of web repo.
+3. Copy the following Azure PowerShell code in the Windows Terminal to replace the **workflow-web3.yaml** file in the path **C:\k8s\Labs\Module5\workflows** with the correct values and replace the **(workflow.yaml)** file with the new content in the **\\.github\workflows\\** folder of web repo.
 
 ```PowerShell
 $Path1="C:\k8s\Labs\Module5\workflows"
@@ -1021,7 +1021,7 @@ $destination_file = (Join-Path $Path2 workflow.yaml)
     } | Set-Content $destination_file
 ```
 
-1. Commit the changes and push them to the GitHub repository. This will also trigger the workflow execution.
+4. Commit the changes and push them to the GitHub repository. This will also trigger the workflow execution.
 
 ```PowerShell
 cd "C:\k8s\Labs\MathTrick\Chained\MT3Chained-Web"
@@ -1030,13 +1030,13 @@ git commit -m "Update workflow.yaml"
 git push
 ```
 
-1. We'll repeat the same process for the *MT3Chained-Step2-NodeJS* repo. The definition of the workflow is basically the same. But first we need to create the **\\.github\workflows\\** folder of NodeJS repo.
+5. We'll repeat the same process for the *MT3Chained-Step2-NodeJS* repo. The definition of the workflow is basically the same. But first we need to create the **\\.github\workflows\\** folder of NodeJS repo.
 
 ```PowerShell
 New-Item -Path "C:\k8s\Labs\MathTrick\Chained\MT3Chained-Step2-NodeJS\.github\workflows" -ItemType Directory
 ```
 
-1. Now, run the following script:
+6. Now, run the following script:
 
 ```PowerShell
 $Path1="C:\k8s\Labs\Module5\workflows"
@@ -1052,7 +1052,7 @@ $destination_file = (Join-Path $Path2 workflow.yaml)
     } | Set-Content $destination_file
 ```
 
-1. Init and Commit the changes and push them to the GitHub repository (As you can see we have some steps more as this repo wasn't initialized before). This will also trigger the workflow execution.
+7. Init and Commit the changes and push them to the GitHub repository (As you can see we have some steps more as this repo wasn't initialized before). This will also trigger the workflow execution.
 
 ```PowerShell
 cd "C:\k8s\Labs\MathTrick\Chained\MT3Chained-Step2-NodeJS"
@@ -1064,9 +1064,9 @@ git branch -M main
 git push -u origin main
 ```
 
-1. Once the execution is over, verify the images in your  Azure Container Registry and the tags in your Azure Key Vault.
+8. Once the execution is over, verify the images in your  Azure Container Registry and the tags in your Azure Key Vault.
 
-1. When all the workflows have run at least once. You can verify their status by selecting "Actions" tab and checking the execution log.
+9. When all the workflows have run at least once. You can verify their status by selecting "Actions" tab and checking the execution log.
 
 ### Task 9 - Build a single Release Pipelines that uses Helm to update the AKS cluster
 
@@ -1076,7 +1076,7 @@ GitHub does not support triggering child workflows from outside of a repository.
 
 1. The use of the GitHub API requires us to authenticate ourselves to perform the required request. This means we need a personal access token available in the repositories that will trigger a deployment when updated. In Task 4 we have already taken care of this step but make sure that all our **step** repositories (Including NodeJS) and the **web** repository have the PAT_GITHUB secret created. This step is mandatory.
 
-1. Once we have the required secrets in place, we have to add the following step at the end of each of our existing workflows.
+2. Once we have the required secrets in place, we have to add the following step at the end of each of our existing workflows.
 
 ```yaml
       # Issue workflow dispatch event to trigger Helm chart deployment
@@ -1090,7 +1090,7 @@ GitHub does not support triggering child workflows from outside of a repository.
 
 The code shown above uses an action to perform the API request that will trigger the workflow_dispatch event for the required repository and workflow. The `workflow` and `repo` parameters determine where the event will be sent. The `token` parameter should be passed the PAT_GITHUB secret we have defined for our repositories.
 
-1. Copy the following Azure PowerShell code in the Windows Terminal to replace the **workflow-steps3.yaml** file in the path **C:\k8s\Labs\Module5\workflows** with the correct values and replace the **(workflow.yaml)** content in **\\.github\workflows\\** folder of all the step repos.
+3. Copy the following Azure PowerShell code in the Windows Terminal to replace the **workflow-steps3.yaml** file in the path **C:\k8s\Labs\Module5\workflows** with the correct values and replace the **(workflow.yaml)** content in **\\.github\workflows\\** folder of all the step repos.
 
 ```PowerShell
 ForEach ($i in 1..5) {
@@ -1109,7 +1109,7 @@ ForEach ($i in 1..5) {
 }
 ```
 
-1. Copy the following Azure PowerShell code in the Windows Terminal to replace the **workflow-web4.yaml** file in the path **C:\k8s\Labs\Module5\workflows** with the correct values and replace the **(workflow.yaml)** content in **\\.github\workflows\\** folder of web repo.
+4. Copy the following Azure PowerShell code in the Windows Terminal to replace the **workflow-web4.yaml** file in the path **C:\k8s\Labs\Module5\workflows** with the correct values and replace the **(workflow.yaml)** content in **\\.github\workflows\\** folder of web repo.
 
 ```PowerShell
 $Path1="C:\k8s\Labs\Module5\workflows"
@@ -1126,7 +1126,7 @@ $destination_file = (Join-Path $Path2 workflow.yaml)
     } | Set-Content $destination_file
 ```
 
-1. We'll repeat the same process for the *MT3Chained-Step2-NodeJS* repo as the web repo above. The definition of the workflow is basically the same.
+5. We'll repeat the same process for the *MT3Chained-Step2-NodeJS* repo as the web repo above. The definition of the workflow is basically the same.
 
 ```PowerShell
 $Path1="C:\k8s\Labs\Module5\workflows"
@@ -1145,7 +1145,7 @@ $destination_file = (Join-Path $Path2 workflow.yaml)
 
 **DO NOT PUSH THE CHANGES YET, AS WE STILL NEED TO ADD THE WORKFLOW THAT WILL RECEIVE THE EVENTS**
 
-1. Once the code repositories are ready, we need to create a workflow that will issue the deployment of our Helm chart. This workflow must be triggered in two circumstances. The first one would be the reception of the workflow_dispatch event, which would correspond to a change made to one of the subprojects (subrepos: step repos, NodeJS and web repo) that are part of the chart. The second is when changes to the Helm repository itself are performed. To do this, we have to make a slight modification to the `on` section of our workflow:
+6. Once the code repositories are ready, we need to create a workflow that will issue the deployment of our Helm chart. This workflow must be triggered in two circumstances. The first one would be the reception of the workflow_dispatch event, which would correspond to a change made to one of the subprojects (subrepos: step repos, NodeJS and web repo) that are part of the chart. The second is when changes to the Helm repository itself are performed. To do this, we have to make a slight modification to the `on` section of our workflow:
 
 ```yaml
 on:
@@ -1156,7 +1156,7 @@ on:
 
 This new definition will cause the workflow to execute following the rules we have previously explained.
 
-1. This repository will connect to our Azure KeyVault and fetch the secrets corresponding to the versions of each of the apps in our solution. These secrets will be used to perform a variable replacement of the entries in the values.yaml file in the chart. We need two steps to perform these tasks. The convenience and versatility of GitHub actions and the workflow syntax can be seen again in this brief example. The chosen actions eliminate the need to manually perform the obtention of the secrets and the replacement of the values in the .yaml code, providing an easy to use alternative for common tasks.
+7. This repository will connect to our Azure KeyVault and fetch the secrets corresponding to the versions of each of the apps in our solution. These secrets will be used to perform a variable replacement of the entries in the values.yaml file in the chart. We need two steps to perform these tasks. The convenience and versatility of GitHub actions and the workflow syntax can be seen again in this brief example. The chosen actions eliminate the need to manually perform the obtention of the secrets and the replacement of the values in the .yaml code, providing an easy to use alternative for common tasks.
 
 ```yaml
       # Get secrets
@@ -1181,7 +1181,7 @@ This new definition will cause the workflow to execute following the rules we ha
           tags.mt3chainedstep5: ${{ steps.versiontags.outputs.mt3chained-step5-tag }}
 ```
 
-1. Before we attempt to deploy our chart, we need to set the AKS context.
+8. Before we attempt to deploy our chart, we need to set the AKS context.
 
 ```yaml
       - name: Azure Kubernetes set context
@@ -1192,14 +1192,14 @@ This new definition will cause the workflow to execute following the rules we ha
           cluster-name: ${{ env.AKS_NAME }}
 ```
 
-1. Once our AKS context is set, we must install Helm.
+9. Once our AKS context is set, we must install Helm.
 
 ```yaml
       - name: Helm tool installer
         uses: Azure/setup-helm@v1
 ```
 
-1. Finally, we just have to run the Helm command to install/upgrade a release.
+10. Finally, we just have to run the Helm command to install/upgrade a release.
 
 ```yaml
       - name: Deploy
@@ -1207,7 +1207,7 @@ This new definition will cause the workflow to execute following the rules we ha
           helm upgrade --install chained mt3chained/
 ```
 
-1. The complete workflow for the Helm repository will look like this:
+11. The complete workflow for the Helm repository will look like this:
 
 ```yaml
 name: Math-Trick-3---Chained
@@ -1273,13 +1273,13 @@ jobs:
           helm upgrade --install chained mt3chained/
 ```
 
-1. But first we need to create the **\\.github\workflows\\** folder of Helm repo.
+12. But first we need to create the **\\.github\workflows\\** folder of Helm repo.
 
 ```PowerShell
 New-Item -Path "C:\k8s\Labs\MathTrick\Chained\Helm\.github\workflows" -ItemType Directory
 ```
 
-1. Copy the following Azure PowerShell code in the Windows Terminal to replace the **workflow-helm.yaml** file in the path **C:\k8s\Labs\Module5\workflows** with the correct values and give it the correct file name **(workflow.yaml)** copying it in **\\.github\workflows\\** folder of Helm repo.
+13. Copy the following Azure PowerShell code in the Windows Terminal to replace the **workflow-helm.yaml** file in the path **C:\k8s\Labs\Module5\workflows** with the correct values and give it the correct file name **(workflow.yaml)** copying it in **\\.github\workflows\\** folder of Helm repo.
 
 ```PowerShell
 $Path1="C:\k8s\Labs\Module5\workflows"
@@ -1293,7 +1293,7 @@ $destination_file = (Join-Path $Path2 workflow.yaml)
     } | Set-Content $destination_file
 ```
 
-1. Copy the following Azure PowerShell code in the Windows Terminal to replace the **values.yaml** file in the path **C:\k8s\Labs\MathTrick\Chained\Helm\mt3chained** with your correct Azure Container Registry name.
+14. Copy the following Azure PowerShell code in the Windows Terminal to replace the **values.yaml** file in the path **C:\k8s\Labs\MathTrick\Chained\Helm\mt3chained** with your correct Azure Container Registry name.
 
 ```PowerShell
 $Path="C:\k8s\Labs\MathTrick\Chained\Helm\mt3chained"
@@ -1313,11 +1313,11 @@ git push
 
 > Note that the execution of this workflow requires the docker images for all the projects to be present in the ACR. This means at least one correct execution of the workflow for each of the projects is required.
 
-1. Wait to see the Helm github action finished.
+2. Wait to see the Helm github action finished.
 
 ![](content/ghhelm-repo-action.png)
 
-1. Now, we can push the changes for the ***step***, **NodeJS** and ***web*** repos. From this point onwards, any change to these projects will also cause the deployment of the chart. Copy the following script in your Windows Terminal:
+3. Now, we can push the changes for the ***step***, **NodeJS** and ***web*** repos. From this point onwards, any change to these projects will also cause the deployment of the chart. Copy the following script in your Windows Terminal:
 
 ```PowerShell
 ForEach ($i in 1..5) {
@@ -1349,7 +1349,7 @@ git push
 > This happens because each of the above pushes will create a trigger for the workflow in the *Math-Trick-3---Chained* repo, and without the *Start-Sleep -s 60* command there would be 7 *helm upgrade --install chained mt3chained/* running at the same time.
 ---
 
-1. Assuming the pipeline succeeds, check the cluster to verify everything has been deployed and is running.
+4. Assuming the pipeline succeeds, check the cluster to verify everything has been deployed and is running.
 
 ```PowerShell
 kubectl get all -n chained
@@ -1357,13 +1357,13 @@ kubectl get all -n chained
 
 ![](content/ghchained-deployed.png)
 
-1. Open a browser and enter the EXTERNAL-IP address listed for the Load Balancer service.
+5. Open a browser and enter the EXTERNAL-IP address listed for the Load Balancer service.
 
-1. Click the Start button to ensure all the services are connected.
+6. Click the Start button to ensure all the services are connected.
 
 ![](content/ghchained-ui-deployed.png)
 
-1. Verify that the Helm pipeline used all the tags from the Key Vault and replaced all the tags successfully, including the ACR.
+7. Verify that the Helm pipeline used all the tags from the Key Vault and replaced all the tags successfully, including the ACR.
 
 ```PowerShell
 helm get values chained -a
@@ -1371,7 +1371,7 @@ helm get values chained -a
 
 ![](content/ghhelm-values.png)
 
-1. Finally, confirm that the entire process is working correctly by adding a test file in any microservice and check it in.
+8. Finally, confirm that the entire process is working correctly by adding a test file in any microservice and check it in.
 
 ```PowerShell
 ## Change into any of the microservice folders
@@ -1381,7 +1381,7 @@ git commit -m "Pipeline test"
 git push
 ```
 
-1. Wait a few minutes to ensure that **ONLY** that effected Pod was automatically replaced with the new version.
+9. Wait a few minutes to ensure that **ONLY** that effected Pod was automatically replaced with the new version.
 
 ```PowerShell
 kubectl get all -n chained
