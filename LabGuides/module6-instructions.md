@@ -4,23 +4,31 @@
 
 > Estimated Duration: 60 minutes
 
-## Module 6 Table of Contents
+- [Lab Module 6: Advanced Kubernetes Topics - Part 1](#lab-module-6-advanced-kubernetes-topics---part-1)
+  - [Create a Basic AKS Cluster](#create-a-basic-aks-cluster)
+    - [Task 1 - Create an AKS cluster (or start an existing one)](#task-1---create-an-aks-cluster-or-start-an-existing-one)
+  - [Exercise: Using Secrets Stored in Azure Key Vault](#exercise-using-secrets-stored-in-azure-key-vault)
+    - [Task 1 - Enable Key Vault Addon in AKS and create a Key Vault](#task-1---enable-key-vault-addon-in-aks-and-create-a-key-vault)
+    - [Task 2 - Assign Permissions for you to create Secrets from Key Vault](#task-2---assign-permissions-for-you-to-create-secrets-from-key-vault)
+    - [Task 3 - Assign Permissions to AKS to read Secrets from Key Vault](#task-3---assign-permissions-to-aks-to-read-secrets-from-key-vault)
+    - [Task 4 - Create Kubernetes resources and read secret from Key Vault](#task-4---create-kubernetes-resources-and-read-secret-from-key-vault)
+    - [Task 5 - Create a Kubernetes Secret from a secret in Key Vault](#task-5---create-a-kubernetes-secret-from-a-secret-in-key-vault)
+  - [Exercise: Using Taints, Tolerations, Node Selectors and Affinity](#exercise-using-taints-tolerations-node-selectors-and-affinity)
+    - [Scenario](#scenario)
+    - [Task 1 – Add workloads to the cluster](#task-1--add-workloads-to-the-cluster)
+    - [Task 2 – Add color and label to node](#task-2--add-color-and-label-to-node)
+    - [Task 3 – Update the Node Selector of the Workload](#task-3--update-the-node-selector-of-the-workload)
+    - [Task 4 – Add a Taint to the Node to prevent other Pods from being scheduled on it](#task-4--add-a-taint-to-the-node-to-prevent-other-pods-from-being-scheduled-on-it)
+    - [Task 5 – Add a Toleration to the Pods so they can be scheduled on the selected Node](#task-5--add-a-toleration-to-the-pods-so-they-can-be-scheduled-on-the-selected-node)
+  - [Shutdown or Delete the AKS Cluster](#shutdown-or-delete-the-aks-cluster)
 
-[Create a Basic AKS Cluster](#create-a-basic-aks-cluster)
-
-[Exercise: Using Secrets Stored in Azure Key Vault](#exercise-using-secrets-stored-in-azure-key-vault)
-
-[Exercise: Using Taints, Tolerations, Node Selectors and Affinity](#exercise-using-taints-tolerations-node-selectors-and-affinity)
-
-[Shutdown or Delete the AKS Cluster](#shutdown-or-delete-the-aks-cluster)
-
-# Create a Basic AKS Cluster
+## Create a Basic AKS Cluster
 
 For the exercises in this module, you'll need simple AKS cluster.
 
 ### Task 1 - Create an AKS cluster (or start an existing one)
 
-1. Select the region closest to your location. Use '**eastus**' for United States workshops, '**westeurope**' for European workshops. Ask your instructor for other options in your region: @lab.DropDownList(region)[eastus,westus,canadacentral,westeurope,centralindia,australiaeast]
+1. Select the region closest to your location. Use '**eastus**' for United States workshops, '**westeurope**' for European workshops.
 
 2. Define variables (update as needed)
 
@@ -37,14 +45,14 @@ $NODE_COUNT="3"
 $LOCATION="@lab.Variable(region)"
 ```
 
-3. Create Resource Group
+1. Create Resource Group
 
 ```PowerShell
 az group create --location $LOCATION `
                 --resource-group $AKS_RESOURCE_GROUP
 ```
 
-4. Create Basic cluster.
+1. Create Basic cluster.
 
 ```PowerShell
 az aks create --node-count $NODE_COUNT `
@@ -54,30 +62,30 @@ az aks create --node-count $NODE_COUNT `
               --resource-group $AKS_RESOURCE_GROUP
 ```
 
-5. Connect to local environment
+1. Connect to local environment
 
 ```PowerShell
 az aks get-credentials --name $AKS_NAME `
                        --resource-group $AKS_RESOURCE_GROUP
 ```
 
-6. Verify connection
+1. Verify connection
 
 ```PowerShell
 kubectl get nodes
 ```
 
-# Exercise: Using Secrets Stored in Azure Key Vault
+## Exercise: Using Secrets Stored in Azure Key Vault
 
 In this Azure Key Vault exercise, you'll perform the following actions:
 
 1. Enable Key Vault Addon in AKS - Azure installs all the components need to integrate Key Vault with AKS
-2. Create an Azure Key Vault - This will contain all the secrets you'll use
-3. Grant _administrator_ permissions you your account - This will allow you to create secrets in the Key Vault.
-4. Create a secret in Azure Key Vault - This will represent the sensitive data you should keep outside the cluster.
-5. Great _reader_ permissions to the AKS cluster - This will allow the cluster to read the external secret
-6. Create custom resources in your cluster to establish the connection to Key Vault - This will specify the AKS identity, Key Vault and secret that will be injected into your Pod.
-7. Mount a CSI secrets volume in your Pod - This will use the information in custom resource retrieve and mount your secret.
+1. Create an Azure Key Vault - This will contain all the secrets you'll use
+1. Grant `administrator` permissions you your account - This will allow you to create secrets in the Key Vault.
+1. Create a secret in Azure Key Vault - This will represent the sensitive data you should keep outside the cluster.
+1. Great `reader` permissions to the AKS cluster - This will allow the cluster to read the external secret
+1. Create custom resources in your cluster to establish the connection to Key Vault - This will specify the AKS identity, Key Vault and secret that will be injected into your Pod.
+1. Mount a CSI secrets volume in your Pod - This will use the information in custom resource retrieve and mount your secret.
 
 ### Task 1 - Enable Key Vault Addon in AKS and create a Key Vault
 
@@ -96,7 +104,7 @@ $AKS_NAME="aks-$($INITIALS)"
 $KV_NAME="kv-$($INITIALS)"
 ```
 
-2. Enable Key Vault Addon in AKS
+1. Enable Key Vault Addon in AKS
 
 ```PowerShell
 az aks addon enable `
@@ -105,7 +113,7 @@ az aks addon enable `
    --resource-group $AKS_RESOURCE_GROUP
 ```
 
-3. Verify addon has been enabled
+1. Verify addon has been enabled
 
 ```PowerShell
 az aks addon list --name $AKS_NAME --resource-group $AKS_RESOURCE_GROUP -o table
@@ -113,7 +121,7 @@ az aks addon list --name $AKS_NAME --resource-group $AKS_RESOURCE_GROUP -o table
 
 ![](content/key-vault-addon.png)
 
-4. Create Key Vault. Notice the **--enable-rbac-authorization** option. This will allow AKS to use its managed identity to access the Key Vault.
+1. Create Key Vault. Notice the **--enable-rbac-authorization** option. This will allow AKS to use its managed identity to access the Key Vault.
 
 ```PowerShell
 az keyvault create --name $KV_NAME `
@@ -135,19 +143,19 @@ Even though you created the Key Vault, you don't automatically have access to th
 
 You can assign yourself as the **Key Vault Secrets Officer**, which will allow you to maintain secrets. You may wish to use **Key Vault Administrator** instead, which will allow you create Keys and Certificates as well.
 
-2. Get the _object id_ of the Key Vault:
+1. Get the `object id` of the Key Vault:
 
 ```PowerShell
 $KV_ID=(az keyvault list --query "[? name=='$($KV_NAME)'].{id:id}" -o tsv)
 ```
 
-3. Get **_your_** object id:
+1. Get **`your`** object id:
 
 ```PowerShell
 $CURRENT_USER_ID=(az ad signed-in-user show --query "{objectId:objectId}" -o tsv)
 ```
 
-4. Assign yourself the Key Vault Secrets Officer/Administrator role:
+1. Assign yourself the Key Vault Secrets Officer/Administrator role:
 
 ```PowerShell
 az role assignment create `
@@ -156,13 +164,13 @@ az role assignment create `
    --scope $KV_ID
 ```
 
-5. List the secrets in the Key Vault again. This time you should get an empty list instead of "not authorized" error.
+1. List the secrets in the Key Vault again. This time you should get an empty list instead of "not authorized" error.
 
 ```PowerShell
 az keyvault secret list --vault-name $KV_NAME
 ```
 
-6. Create a sample secret for testing
+1. Create a sample secret for testing
 
 ```PowerShell
 az keyvault secret set `
@@ -171,7 +179,7 @@ az keyvault secret set `
    --value "Highly sensitive information: <place data here>"
 ```
 
-7. Verify the secret is in the Key Vault
+1. Verify the secret is in the Key Vault
 
 ```PowerShell
 az keyvault secret list --vault-name $KV_NAME -o table
@@ -191,14 +199,14 @@ az identity list --query "[].{name:name,ClientId:clientId}" -o table
 
 ![](content/aks-kv-identity.png)
 
-2. Get the object id of that managed identity AKS is using
+1. Get the object id of that managed identity AKS is using
 
 ```PowerShell
 $KV_IDENTITY=(az identity list --query "[? contains(name,'azurekeyvaultsecretsprovider')].{principalId:principalId}" -o tsv)
 $KV_CLIENT_ID=(az identity list --query "[? contains(name,'azurekeyvaultsecretsprovider')].{clientId:clientId}" -o tsv)
 ```
 
-3. Assign the AKS identity permission to read secrets from the Key Vault.
+1. Assign the AKS identity permission to read secrets from the Key Vault.
 
 ```PowerShell
 az role assignment create `
@@ -221,19 +229,19 @@ Tenant Id: $($TENANT_ID)
 "@
 ```
 
-2. Change current folder to **Module6**
+1. Change current folder to **Module6**
 
 ```PowerShell
 cd  C:\k8s\labs\Module6
 ```
 
-3. Open the file called called **spc.yaml**.
+1. Open the file called called **spc.yaml**.
 
 ```PowerShell
 code spc.yaml
 ```
 
-4. Replace the placeholders with the values listed above.
+1. Replace the placeholders with the values listed above.
 
 ```yaml
 apiVersion: secrets-store.csi.x-k8s.io/v1
@@ -252,18 +260,18 @@ spec:
       array:
         - |
           objectName: SampleSecret
-          objectType: secret 
+          objectType: secret
           objectVersion: ""
     tenantId: <tenant-id>
 ```
 
-5. Apply the manifest.
+1. Apply the manifest.
 
 ```PowerShell
 kubectl apply -f spc.yaml
 ```
 
-6. Review the contents of **pod-kv.yaml**.
+1. Review the contents of **pod-kv.yaml**.
 
 ```yaml
 kind: Pod
@@ -290,13 +298,13 @@ spec:
           secretProviderClass: "azure-kv-secret"
 ```
 
-7. Apply the manifest.
+1. Apply the manifest.
 
 ```PowerShell
 kubectl apply -f pod-kv.yaml
 ```
 
-8. View secret value in Pod
+1. View secret value in Pod
 
 ```PowerShell
 kubectl exec -it pod-kv -- cat /mnt/secrets-store/SampleSecret
@@ -306,7 +314,7 @@ You should now be able to see the content of the Key Vault secret you created ea
 
 ### Task 5 - Create a Kubernetes Secret from a secret in Key Vault
 
-Many Kubernetes resources use _Secret_ resources (Ingress, Persistent Volumes, etc.). You can extend the configuration about to create a Kubernetes secret object when you mount the Pod.
+Many Kubernetes resources use `Secret` resources (Ingress, Persistent Volumes, etc.). You can extend the configuration about to create a Kubernetes secret object when you mount the Pod.
 
 1. Edit the **SecretProviderClass** you created earlier.
 
@@ -339,13 +347,13 @@ spec:
   ...
 ```
 
-2. Update the object.
+1. Update the object.
 
 ```PowerShell
 kubectl apply -f spc.yaml
 ```
 
-3. Edit the Pod manifest. Notice the **_env_** section setting the environment variable.
+1. Edit the Pod manifest. Notice the **`env`** section setting the environment variable.
 
 ```PowerShell
 code pod-kv.yaml
@@ -386,14 +394,14 @@ spec:
           secretProviderClass: "azure-kv-secret"
 ```
 
-4. Since Pods are immutable, you'll have to delete it and then reapply the manifest.
+1. Since Pods are immutable, you'll have to delete it and then reapply the manifest.
 
 ```PowerShell
 kubectl delete pod pod-kv
 kubectl apply -f pod-kv.yaml
 ```
 
-5. View the secret in the Pod.
+1. View the secret in the Pod.
 
 ```PowerShell
 kubectl exec -it pod-kv -- printenv
@@ -401,7 +409,7 @@ kubectl exec -it pod-kv -- printenv
 
 ![](content/key-vault-env1.png)
 
-6. Verify the Secret object has been created and is available for other Pods to use.
+1. Verify the Secret object has been created and is available for other Pods to use.
 
 ```PowerShell
 kubectl get secret
@@ -409,7 +417,7 @@ kubectl get secret
 
 ![](content/key-vault-secret.png)
 
-7. Delete the Pod and the Kubernetes Secret object will also be deleted. Once an injected Secret is no longer referenced by any Pods, it's automatically deleted.
+1. Delete the Pod and the Kubernetes Secret object will also be deleted. Once an injected Secret is no longer referenced by any Pods, it's automatically deleted.
 
 ```PowerShell
 kubectl delete pod pod-kv
@@ -421,23 +429,19 @@ kubectl get secret
 
 Once an injected Secret is no longer referenced by any Pods, it's automatically deleted.
 
-[Module 6 Table of Contents](#module-6-table-of-contents)
-
-[List of Modules](#modules-list)
-
-# Exercise: Using Taints, Tolerations, Node Selectors and Affinity
+## Exercise: Using Taints, Tolerations, Node Selectors and Affinity
 
 In this exercise, you will work with 3 simple workloads of 12 Pods each. You’ll ensure that "heavy" workloads are scheduled on Nodes that can handle the loads and "light" workloads don’t clutter up those nodes and use up valuable resources which could be used by the Pods that need them.
 
-## Scenario
+### Scenario
 
 We assume you have 3 nodes in your cluster. If you don't, please create and AKS cluster with at least 3 nodes.
 
 Assume the following about your AKS cluster:
 
 1. One of the nodes has specialized hardware (GPUs) which make it ideal for hosting graphics processing workloads and for Machine Learning.
-2. The other 2 nodes have basic hardware and are meant for general purpose processing.
-3. You have 3 workloads you need to schedule in the cluster:
+1. The other 2 nodes have basic hardware and are meant for general purpose processing.
+1. You have 3 workloads you need to schedule in the cluster:
    - Workload 1 – Makes use of heavy GPU hardware for processing tasks.
    - Workload 2 – General purpose
    - Workload 3 – General purpose
@@ -445,11 +449,11 @@ Assume the following about your AKS cluster:
 The goal of this exercise is to make sure that:
 
 1. Workload 1 Pods are scheduled ONLY on Node 1, so they can take full advantage of the hardware.
-2. Workloads 2 & 3 are NOT scheduled on Node 1, so they don’t use up resources which could be used by additional replicas of Workload 1.
+1. Workloads 2 & 3 are NOT scheduled on Node 1, so they don’t use up resources which could be used by additional replicas of Workload 1.
 
-You’ll start with 3 workload _yaml_ files. The containers in them are identical, but for the purpose of this lab, you’ll pretend and **_workload1.yaml_** does extensive processing that takes advantage of a GPU in the Node.
+You’ll start with 3 workload `yaml` files. The containers in them are identical, but for the purpose of this lab, you’ll pretend and **`workload1.yaml`** does extensive processing that takes advantage of a GPU in the Node.
 
-### Task 1 – Add workloads to the cluster.
+### Task 1 – Add workloads to the cluster
 
 1. Open a Window Terminal window and apply the following workloads:
 
@@ -459,7 +463,7 @@ kubectl apply -f .\workload-2.yaml
 kubectl apply -f .\workload-3.yaml
 ```
 
-2. Verify that the Pods are running
+1. Verify that the Pods are running
 
 ```PowerShell
 kubectl get pods
@@ -467,7 +471,7 @@ kubectl get pods
 
 ![](content/tt-pods-running.png)
 
-### Task 2 – Add color and label to node.
+### Task 2 – Add color and label to node
 
 1. Get a list of the Nodes.
 
@@ -475,23 +479,23 @@ kubectl get pods
 kubectl get nodes
 ```
 
-2. Pick on of the Nodes to be the "GPU" Node (it doesn't matter which one). Copy it's name by clicking the Right button on your mouse
+1. Pick on of the Nodes to be the "GPU" Node (it doesn't matter which one). Copy it's name by clicking the Right button on your mouse
 
 ![](content/tt-get-nodes.png)
 
-3. Set a variable to the Node name you selected (replace the NodeName with your selected node)
+1. Set a variable to the Node name you selected (replace the NodeName with your selected node)
 
 ```PowerShell
 $NodeName="aks-userpool1-20365992-vmss000001"
 ```
 
-3. Add a **color=lime** and **process=GPU** labels to the Node to distinguish it from the others and allow the Pods to find it..
+1. Add a **color=lime** and **process=GPU** labels to the Node to distinguish it from the others and allow the Pods to find it..
 
 ```PowerShell
 kubectl label node $NodeName color=lime, process=GPU --overwrite
 ```
 
-### Task 3 – Update the Node Selector of the Workload.
+### Task 3 – Update the Node Selector of the Workload
 
 1. Edit the **workload-1.yaml** file to update the node selector to ensure it's only scheduled on the selected node.
 
@@ -501,13 +505,13 @@ kubectl label node $NodeName color=lime, process=GPU --overwrite
         process: GPU
 ```
 
-2. Save and apply workload1.yaml again.
+1. Save and apply workload1.yaml again.
 
 ```PowerShell
 kubectl apply -f .\workload-1.yaml
 ```
 
-3. Verify that the Pods have been rescheduled on the selected node.
+1. Verify that the Pods have been rescheduled on the selected node.
 
 ```PowerShell
 kubectl get pods -o wide
@@ -515,9 +519,9 @@ kubectl get pods -o wide
 
 ![](content/tt-pods-wide.png)
 
-4. Notice also that some of other pods are on the same node. If you scale **_workload-1_**, there might not be enough room for the additional pods to be scheduled on the selected node. Those pods will remain in a **Pending** state because any label specified in the **NodeSelector** is a required to be present on the node before a Pod can be scheduled there. Since no other nodes have the required label, there's nowhere for the scheduler to place the additional Pods.
+1. Notice also that some of other pods are on the same node. If you scale **workload-1**, there might not be enough room for the additional pods to be scheduled on the selected node. Those pods will remain in a **Pending** state because any label specified in the **NodeSelector** is a required to be present on the node before a Pod can be scheduled there. Since no other nodes have the required label, there's nowhere for the scheduler to place the additional Pods.
 
-### Task 4 – Add a Taint to the Node to prevent other Pods from being scheduled on it.
+### Task 4 – Add a Taint to the Node to prevent other Pods from being scheduled on it
 
 1. Add a **NoSchedule** taint to the selected node
 
@@ -525,23 +529,23 @@ kubectl get pods -o wide
 kubectl taint nodes $NodeName allowed=GPUOnly:NoSchedule
 ```
 
-2. The problem is that there are still pods on this node that were scheduled before the node was tainted. Remove those pods and let the scheduler place the on different nodes
+1. The problem is that there are still pods on this node that were scheduled before the node was tainted. Remove those pods and let the scheduler place the on different nodes
 
 ```PowerShell
 kubectl delete pods --field-selector=spec.nodeName=$NodeName
 ```
 
-3. Get a list of Pods
+1. Get a list of Pods
 
 ```PowerShell
 kubectl get pods
 ```
 
-4. As you can see the other Pods were rescheduled. However, ** workload-1** pods are all in a **Pending** state.
+1. As you can see the other Pods were rescheduled. However, **workload-1** pods are all in a **Pending** state.
 
 ![](content/tt-pods-pending.png)
 
-5. Describe one of the Pods to see the problem (substritute one of your pod names)
+1. Describe one of the Pods to see the problem (substitute one of your pod names)
 
 ```PowerShell
 kubectl describe pod workload-1-7d7499b8f4-4jmck
@@ -549,9 +553,9 @@ kubectl describe pod workload-1-7d7499b8f4-4jmck
 
 ![](content/tt-pods-not-tolerant.png)
 
-### Task 5 – Add a Toleration to the Pods so they can be scheduled on the selected Node.
+### Task 5 – Add a Toleration to the Pods so they can be scheduled on the selected Node
 
-1. Add a toleration to the **_workload-1.yaml_** file (same indentation and **NodeSelector**)
+1. Add a toleration to the **`workload-1.yaml`** file (same indentation and **NodeSelector**)
 
 ```PowerShell
       tolerations:
@@ -561,13 +565,13 @@ kubectl describe pod workload-1-7d7499b8f4-4jmck
         effect: "NoSchedule"
 ```
 
-2. Save and apply the changes.
+1. Save and apply the changes.
 
 ```PowerShell
 kubectl apply -f .\workload-1.yaml
 ```
 
-3. Review the pods
+1. Review the pods
 
 ```PowerShell
 kubectl get pods -o wide
@@ -575,13 +579,9 @@ kubectl get pods -o wide
 
 ![](content/tt-pods-tolerant.png)
 
-4. Now you can see that all the **_Workload-1_** pods are on the selected node AND no other pods are scheduled (or will be scheduled) on the selected node.
+1. Now you can see that all the **`Workload-1`** pods are on the selected node AND no other pods are scheduled (or will be scheduled) on the selected node.
 
-[Module 6 Table of Contents](#module-6-table-of-contents)
-
-[List of Modules](#modules-list)
-
-# Shutdown or Delete the AKS Cluster
+## Shutdown or Delete the AKS Cluster
 
 When you're done for the day, you can shutdown your cluster to avoid incurring charges when you're not using it. This will delete all your nodes, but keep your configuration in tact.
 
@@ -595,5 +595,3 @@ Or you can choose to delete the entire resource group instead. You can create a 
 ```PowerShell
 az group delete --resource-group $AKS_RESOURCE_GROUP
 ```
-
-[List of Modules](#modules-list)

@@ -4,25 +4,34 @@
 
 > Estimated Duration: 60 minutes
 
-## Module 3 Table of Contents
+- [Lab Module 3: Intermediate Kubernetes Concepts](#lab-module-3-intermediate-kubernetes-concepts)
+  - [Create a Basic Cluster](#create-a-basic-cluster)
+    - [Task 1 - Create an AKS cluster](#task-1---create-an-aks-cluster)
+  - [Exercise: Working with Multi-Container Pods, Ephemeral Volumes and ConfigMaps](#exercise-working-with-multi-container-pods-ephemeral-volumes-and-configmaps)
+    - [Task 1 - Review and deploy ConfigMaps](#task-1---review-and-deploy-configmaps)
+    - [Task 2 - Review and deploy multi-container Deployment](#task-2---review-and-deploy-multi-container-deployment)
+    - [Task 3 - Confirm communications between containers](#task-3---confirm-communications-between-containers)
+  - [Exercise: Working with Persistent Volumes, Persistent Volume Claims and Secrets](#exercise-working-with-persistent-volumes-persistent-volume-claims-and-secrets)
+    - [Task 1 - Create an Azure Storage Account and an Azure File Share](#task-1---create-an-azure-storage-account-and-an-azure-file-share)
+    - [Task 2 - Create a Namespace for this lab](#task-2---create-a-namespace-for-this-lab)
+    - [Task 3 - Create a Secret imperatively](#task-3---create-a-secret-imperatively)
+    - [Task 4 - Create a Persistent Volume and a Persistent Volume Claim](#task-4---create-a-persistent-volume-and-a-persistent-volume-claim)
+    - [Task 5 - Use the Persistent Volume Claim in a Pod](#task-5---use-the-persistent-volume-claim-in-a-pod)
+    - [Task 6 - Set the current Namespace back to default](#task-6---set-the-current-namespace-back-to-default)
+  - [Exercise: Using Ingress Resources and Ingress Controller to control external access](#exercise-using-ingress-resources-and-ingress-controller-to-control-external-access)
+    - [Task 1 - Install NGinx Ingress Controller](#task-1---install-nginx-ingress-controller)
+    - [Task 2 - Define a Default Backend](#task-2---define-a-default-backend)
+    - [Task 3 - Install Deployments, Services and Ingress Resource in a separate namespace](#task-3---install-deployments-services-and-ingress-resource-in-a-separate-namespace)
+    - [Task 4 - Access Pods From a single external IP](#task-4---access-pods-from-a-single-external-ip)
+  - [Shutdown or Delete the Cluster](#shutdown-or-delete-the-cluster)
 
-[Create a Basic Cluster](#create-a-basic-cluster)
-
-[Exercise: Working with Multi-Container Pods, Ephemeral Volumes and ConfigMaps](#exercise-working-with-multi-container-pods-ephemeral-volumes-and-configmaps)
-
-[Exercise: Working with Persistent Volumes, Persistent Volume Claims and Secrets](#exercise-working-with-persistent-volumes-persistent-volume-claims-and-secrets)
-
-[Exercise: Using Ingress Resources and Ingress Controller to Control External Access](#exercise-using-ingress-resources-and-ingress-controller-to-control-external-access)
-
-[Shutdown or Delete the Cluster](#shutdown-or-delete-the-cluster)
-
-# Create a Basic Cluster
+## Create a Basic Cluster
 
 For the exercises in this module, you'll need simple AKS cluster.
 
 ### Task 1 - Create an AKS cluster
 
-1. Select the region closest to your location. Use '**eastus**' for United States workshops, '**westeurope**' for European workshops. Ask your instructor for other options in your region: @lab.DropDownList(region)[eastus,westus,canadacentral,westeurope,centralindia,australiaeast]
+1. Select the region closest to your location. Use '**eastus**' for United States workshops, '**westeurope**' for European workshops.
 
 2. Define variables (update as needed)
 
@@ -60,7 +69,7 @@ az aks create --node-count $NODE_COUNT `
 
 ```PowerShell
 az aks get-credentials --name $AKS_NAME `
-                       --resource-group $AKS_RESOURCE_GROUP
+                      --resource-group $AKS_RESOURCE_GROUP
 ```
 
 6. Verify connection
@@ -69,11 +78,11 @@ az aks get-credentials --name $AKS_NAME `
 kubectl get nodes
 ```
 
-# Exercise: Working with Multi-Container Pods, Ephemeral Volumes and ConfigMaps
+## Exercise: Working with Multi-Container Pods, Ephemeral Volumes and ConfigMaps
 
-This exercise shows how multiple containers within the same pod can use volumes to communicate with each other and how you can use _ConfigMaps_ to mount settings files into containers.
+This exercise shows how multiple containers within the same pod can use volumes to communicate with each other and how you can use `ConfigMaps` to mount settings files into containers.
 
-The example Deployment below configures a MySQL instance to write its activities to a log file. Another container reads that log file, and in a production setting, would send the contents to an external log aggrigator. In this example, the 2nd container just outputs the _tail_ of the log file to the console.
+The example Deployment below configures a MySQL instance to write its activities to a log file. Another container reads that log file, and in a production setting, would send the contents to an external log aggregator. In this example, the 2nd container just outputs the `tail` of the log file to the console.
 
 ### Task 1 - Review and deploy ConfigMaps
 
@@ -87,11 +96,12 @@ The example Deployment below configures a MySQL instance to write its activities
 cd  C:\k8s\labs\Module3
 ```
 
-3. Review the **mysql-initdb-cm.yaml** file. 
+3. Review the **mysql-initdb-cm.yaml** file.
 
 ```PowerShell
 cat mysql-initdb-cm.yaml
 ```
+
 This sql script will be used to initialize the database.
 
 ```yaml
@@ -176,26 +186,26 @@ The init file is mapped to the known MySql folder. Anything placed is that folde
 
 The config file is mapped to the MySql config folder. However, there are other config files already in that folder that MySql needs to access. As a result, replacing the entire folder with the contents of the ConfigMap will prevent MySql from working, because the other config files won't be there.
 
-That's where the _subPath_ property comes into play. It allow you to mount only a subset of your volume (in this case only a single file), leaving the exiting content in place at the destination.
+That's where the `subPath` property comes into play. It allow you to mount only a subset of your volume (in this case only a single file), leaving the exiting content in place at the destination.
 
 The final mount points to the empty directory created to hold the logs.
 
 3. Review the second container definition.
 
-```yaml
-- name: logreader
-  image: busybox
-  command:
-    - "/bin/sh"
-  args:
-    - "-c"
-    - "tail -f /usr/log/general.log;"
-  volumeMounts:
-    - name: mysql-log
-      mountPath: /usr/log/
-```
+  ```yaml
+  - name: logreader
+    image: busybox
+    command:
+      - "/bin/sh"
+    args:
+      - "-c"
+      - "tail -f /usr/log/general.log;"
+    volumeMounts:
+      - name: mysql-log
+        mountPath: /usr/log/
+  ```
 
-> Notice that the same empty directory is mounted to this container and that the container simply executes a _tail_ command, outputting the last line in the file.
+> Notice that the same empty directory is mounted to this container and that the container simply executes a `tail` command, outputting the last line in the file.
 
 4. Apply the deployment.
 
@@ -229,7 +239,7 @@ kubectl exec -it -c mysql "name of mysql-dep-xxxxx pod" -- bash
 mysql
 ```
 
-5. Type the following commands in the **_mysql>_** prompt:
+5. Type the following commands in the **`mysql>`** prompt:
 
 ```bash
 use sample;
@@ -252,11 +262,7 @@ exit;
 exit
 ```
 
-[Module 3 Table of Contents](#module-3-table-of-contents)
-
-[List of Modules](#modules-list)
-
-# Exercise: Working with Persistent Volumes, Persistent Volume Claims and Secrets
+## Exercise: Working with Persistent Volumes, Persistent Volume Claims and Secrets
 
 This exercise shows an example of using a secret to store the password needed by an Azure File Share. You will first create the Azure File Share, get its Access Key and then configure a secret to use that access key to connect a volume to a Pod.
 
@@ -307,13 +313,13 @@ az storage share create --name $SHARE_NAME `
                         --resource-group $AKS_RESOURCE_GROUP -o tsv)
 ```
 
-6. The **_Account Name_** and **_Account Key_** will be echoed to the screen for reference.
+6. The **`Account Name`** and **`Account Key`** will be echoed to the screen for reference.
 
 ```PowerShell
 $STORAGE_KEY=$(az storage account keys list `
-       --resource-group $AKS_RESOURCE_GROUP `
-       --account-name $STORAGE_ACCOUNT_NAME `
-       --query "[0].value" -o tsv)
+      --resource-group $AKS_RESOURCE_GROUP `
+      --account-name $STORAGE_ACCOUNT_NAME `
+      --query "[0].value" -o tsv)
 
 $STORAGE_ACCOUNT_NAME
 $STORAGE_KEY
@@ -337,7 +343,7 @@ kubectl config set-context --current --namespace lab3volume
 
 ### Task 3 - Create a Secret imperatively
 
-1. The **_Account Name_** and **_Account Key_** need to be saved into a Kubernetes Secret object. The best way to do this is to create the Secret imperatively:
+1. The **`Account Name`** and **`Account Key`** need to be saved into a Kubernetes Secret object. The best way to do this is to create the Secret imperatively:
 
 ```PowerShell
 kubectl create secret generic azure-secret `
@@ -354,7 +360,7 @@ kubectl create secret generic azure-secret `
 cat azure-secret.yaml
 ```
 
-**NOTE:** It's best to create the file first and then apply it so you can repeat the process if needed.
+> It's best to create the file first and then apply it so you can repeat the process if needed.
 
 ![](content/secret.png)
 
@@ -366,15 +372,13 @@ kubectl apply -f azure-secret.yaml -n lab3volume
 
 ### Task 4 - Create a Persistent Volume and a Persistent Volume Claim
 
-The first step to accessing an Azure File Share is creating a _PersistentVolume_ object that connects to that share.
+The first step to accessing an Azure File Share is creating a `PersistentVolume` object that connects to that share.
 
 1. Review the value of **SHARE_NAME** created in Task 1 above.
 
-```
+```bash
 echo $SHARE_NAME
 ```
-
-**CRITICAL STEP:**
 
 2. Review the contents of **azurefile-pv.yaml**. Make sure the **shareName** property matches the value of **SHARE_NAME**.
 
@@ -390,7 +394,7 @@ echo $SHARE_NAME
 kubectl apply -f azurefile-pv.yaml
 ```
 
-5. Make sure the _PersistentVolume_ was created and has a status of _Available_.
+5. Make sure the `PersistentVolume` was created and has a status of `Available`.
 
 ```PowerShell
 kubectl get pv
@@ -410,7 +414,7 @@ Also the label selector is set to find the PV.
 kubectl apply -f azurefile-pvc.yaml
 ```
 
-8. Verify that the Persistent Volume Claim is _bound_ to the Persistent Volume.
+8. Verify that the Persistent Volume Claim is `bound` to the Persistent Volume.
 
 ```PowerShell
 kubectl get pvc
@@ -432,7 +436,7 @@ Notice that the PVC claimed the PV:
 
 Now that the connection is configured to the Azure File Share, create a Pod to use the Persistent Volume Claim.
 
-1. Review the contents of **pvc-pod.yaml**. Notice how the _persistentVolumeClaim_ is being used and _mountPath_ of the _volumeMount_.
+1. Review the contents of **pvc-pod.yaml**. Notice how the `persistentVolumeClaim` is being used and `mountPath` of the `volumeMount`.
 
 ![](content/pvc-pod.png)
 
@@ -477,7 +481,7 @@ ls -l
 
 ![](content/2files.png)
 
-10. Get a list of files in the shared folder again.
+11. Get a list of files in the shared folder again.
 
 ```PowerShell
 ls -l
@@ -489,7 +493,7 @@ Both files should be in the shared folder:
 
 This confirms that the **sharedfolder** is mapped to the Azure File Share.
 
-11. Exit the container.
+12. Exit the container.
 
 ```bash
 exit
@@ -509,11 +513,7 @@ kubectl config set-context --current --namespace default
 kubectl delete ns lab3volume
 ```
 
-[Module 3 Table of Contents](#module-3-table-of-contents)
-
-[List of Modules](#modules-list)
-
-# Exercise: Using Ingress Resources and Ingress Controller to control external access
+## Exercise: Using Ingress Resources and Ingress Controller to control external access
 
 Ingress resources and 3rd-party Ingress Controllers can be used to centrally control external access to the cluster.
 
@@ -541,18 +541,17 @@ helm upgrade --install ingress-nginx ingress-nginx `
     --set controller.service.externalTrafficPolicy=Local `
     --set defaultBackend.image.image=defaultbackend-amd64 `
     --set defaultBackend.image.tag=1.5
-
 ```
 
 3. Wait a few minutes to allow the Nginx Load Balancer service to aquire an external IP address.
 
-4. Query the services in the **_ingress-nginx_** namespace.
+4. Query the services in the **`ingress-nginx`** namespace.
 
 ```PowerShell
 kubectl get svc -n ingress-nginx
 ```
 
-Get the _EXTERNAL IP_ of the Load Balancer:
+Get the `EXTERNAL IP` of the Load Balancer:
 
 ```console
 NAME                                         TYPE           CLUSTER-IP     EXTERNAL-IP     PORT(S)                      AGE
@@ -568,7 +567,7 @@ service/ingress-nginx-controller-admission   ClusterIP      10.0.244.155   <none
 
 This is the default NGinx Ingress Controller page.
 
-2. Review the contents of **C:\k8s\labs\Module3\default-backend.yaml** file in an editor. Notice the special property to specify the default backend. There's no _path_ property needed.
+2. Review the contents of **C:\k8s\labs\Module3\default-backend.yaml** file in an editor. Notice the special property to specify the default backend. There's no `path` property needed.
 
 ```yaml
 apiVersion: networking.k8s.io/v1
@@ -583,7 +582,7 @@ spec:
         number: 8100
 ```
 
-3. Apply the _Default Backend_ deployment, service and ingress resource to the _default_ namespace (not _dev_).
+3. Apply the `Default Backend` deployment, service and ingress resource to the `default` namespace (not `dev`).
 
 ```PowerShell
 kubectl apply -f default-dep.yaml -n default
@@ -591,13 +590,13 @@ kubectl apply -f default-svc.yaml -n default
 kubectl apply -f default-backend.yaml -n default
 ```
 
-4. Open the browser and enter the exnteral IP of the Ingress controller by itself: **http://"external ip"**
+4. Open the browser and enter the external IP of the Ingress controller by itself: `http://<external ip>`
 
 ![](content/default-dep.png)
 
 ### Task 3 - Install Deployments, Services and Ingress Resource in a separate namespace
 
-1. Create the _dev_ namespace
+1. Create the `dev` namespace
 
 ```PowerShell
 kubectl create ns dev
@@ -616,7 +615,7 @@ kubectl apply -f blue-dep.yaml -f blue-svc.yaml -n dev
 kubectl apply -f red-dep.yaml -f red-svc.yaml -n dev
 ```
 
-4. Review the contents of **C:\k8s\labs\Module3\colors-ingress.yaml** file in an editor. Notice the _path_ setting to route traffic to the correct service.
+4. Review the contents of **C:\k8s\labs\Module3\colors-ingress.yaml** file in an editor. Notice the `path` setting to route traffic to the correct service.
 
 ```yaml
 apiVersion: networking.k8s.io/v1
@@ -667,33 +666,25 @@ colors-ingress   <none>   *                 80      16s
 
 ### Task 4 - Access Pods From a single external IP
 
-1. Open the browser and enter the exnteral IP of the Ingress controller service and append "/blue/" to the path: **http://"external ip"/blue/** (make sure to include the last /).
+1. Open the browser and enter the external IP of the Ingress controller service and append "/blue/" to the path: **http://"external ip"/blue/** (make sure to include the last /).
 
 ![](content/blue-dep.png)
 
-2. Open the browser and enter the exnteral IP of the Ingress controller service and append "/red/" to the path: **http://"external ip"/red/** (make sure to include the last /)
+2. Open the browser and enter the external IP of the Ingress controller service and append "/red/" to the path: **http://"external ip"/red/** (make sure to include the last /)
 
 ![](content/red-dep.png)
 
-[Module 3 Table of Contents](#module-3-table-of-contents)
-
-[List of Modules](#modules-list)
-
-# Shutdown or Delete the Cluster
+## Shutdown or Delete the Cluster
 
 When you're done for the day, you can shutdown your cluster to avoid incurring charges when you're not using it. This will delete all your nodes, but keep your configuration in tact.
 
 ```PowerShell
 az aks stop --name $AKS_NAME `
-            --resource-group $AKS_RESOURCE_GROUP
+          --resource-group $AKS_RESOURCE_GROUP
 ```
 
-Or you can choose to delete the entier resource group instead. You can create a new one prior to the next lab.
+Or you can choose to delete the entire resource group instead. You can create a new one prior to the next lab.
 
 ```PowerShell
 az group delete --resource-group $AKS_RESOURCE_GROUP
 ```
-
-[Module 3 Table of Contents](#module-3-table-of-contents)
-
-[List of Modules](#modules-list)
