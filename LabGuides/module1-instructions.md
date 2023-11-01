@@ -43,19 +43,19 @@ In this exercise you will create a simple AKS cluster. In the next module, you'l
 
 > Windows Terminal allows you to open tabbed command terminals.
 
-1. Login to Azure.
+2. Login to Azure.
 
 ```PowerShell
 az login
 ```
 
-1. Set the current subscription.
+3. Set the current subscription.
 
 ```PowerShell
 az account set --subscription "Azure Pass - Sponsorship"
 ```
 
-1. Register needed providers.
+4. Register needed providers.
 
 ```PowerShell
 az provider register --namespace Microsoft.Storage
@@ -70,21 +70,21 @@ az provider register --namespace Microsoft.ContainerService
 az provider register --namespace Microsoft.Kubernetes
 ```
 
-1. Open a browser and navigate to the Azure Portal: **_portal.azure.com_**
+5. Open a browser and navigate to the Azure Portal: **_portal.azure.com_**
 
-1. Search for and open the **Subscriptions** blade. Select your **Azure Pass - Sponsorship** subscription.
+6. Search for and open the **Subscriptions** blade. Select your **Azure Pass - Sponsorship** subscription.
 
-1. Scroll down and select **Resource providers**.
+7. Scroll down and select **Resource providers**.
 
 ![](content/azure-resources.png)
 
-1. Watch the progress of the registration process until all the providers listed above have been registered. Click the _Refresh_ button every few minutes to update the progress. Once everything has been registered, continue with the tasks in this lab.
+8. Watch the progress of the registration process until all the providers listed above have been registered. Click the _Refresh_ button every few minutes to update the progress. Once everything has been registered, continue with the tasks in this lab.
 
 ### Task 2 - Define variables and create resource group
 
-1. Select the region closest to your location. Use '**eastus**' for United States workshops, '**westeurope**' for European workshops. 
+1. Select the region closest to your location. Use '**eastus**' for United States workshops, '**westeurope**' for European workshops.
 
-1. Set your initials and define variables.
+2. Set your initials and define variables.
 
 ```PowerShell
 $INITIALS="abc"
@@ -97,20 +97,20 @@ $AKS_IDENTITY="identity-$($INITIALS)"
 $LOCATION="@lab.Variable(region)"
 ```
 
-1. Get list of available VM sizes with 2 cores in your region.
+3. Get list of available VM sizes with 2 cores in your region.
 
 ```PowerShell
 az vm list-sizes --location $LOCATION `
                  --query "[?numberOfCores == ``2``].{Name:name}" -o table
 ```
 
-1. Set the VM SKU to one of the available values or use the default below.
+4. Set the VM SKU to one of the available values or use the default below.
 
 ```PowerShell
 $VM_SKU="Standard_D2as_v5"
 ```
 
-1. Create Resource Group.
+5. Create Resource Group.
 
 ```PowerShell
 az group create --location $LOCATION `
@@ -126,7 +126,7 @@ $AKS_NAME="aks-$($INITIALS)"
 Write-Host "AKS Cluster Name: $AKS_NAME"
 ```
 
-1. Create a simple AKS cluster.
+2. Create a simple AKS cluster.
 
 ```PowerShell
 az aks create --node-count 2 `
@@ -138,14 +138,14 @@ az aks create --node-count 2 `
 
 > The creation process will take able 5-10 minutes.
 
-1. Once complete, connect the cluster to your local client machine.
+3. Once complete, connect the cluster to your local client machine.
 
 ```PowerShell
 az aks get-credentials --name $AKS_NAME `
                        --resource-group $AKS_RESOURCE_GROUP
 ```
 
-1. Confirm the connection to the cluster.
+4. Confirm the connection to the cluster.
 
 ```PowerShell
 kubectl get nodes
@@ -167,7 +167,7 @@ This Exercise demonstrates the use of a YAML file to create a pod declaratively.
 cd C:\k8s\labs\Module1
 ```
 
-1. Use the YAML file provided to create a Pod. You may want to open the **simple-pod.yaml** file and review its contents.
+2. Use the YAML file provided to create a Pod. You may want to open the **simple-pod.yaml** file and review its contents.
 
 The pod definition contains the **Nginx** container that listens to port 80.
 
@@ -175,7 +175,7 @@ The pod definition contains the **Nginx** container that listens to port 80.
 kubectl apply -f simple-pod.yaml
 ```
 
-1. Now, make sure pod is up and running.
+3. Now, make sure pod is up and running.
 
 ```PowerShell
 kubectl get pods
@@ -185,7 +185,7 @@ You should see a pod named **nginx-pod**
 
 ![](content/simple-pod.png)
 
-1. Add a second pod, then check the list again.
+4. Add a second pod, then check the list again.
 
 ```PowerShell
 kubectl apply -f simple-pod2.yaml
@@ -202,13 +202,13 @@ kubectl get pods --show-labels
 
 ![](content/pod-list-labels.png)
 
-1. Let's say you want to list pods that have a label named **kind=web** associated with them. You can use **-l** switch to apply filter based on labels.
+2. Let's say you want to list pods that have a label named **kind=web** associated with them. You can use **-l** switch to apply filter based on labels.
 
 ```PowerShell
 kubectl get pod -l kind=web
 ```
 
-1. To prove that this works as expected, run the command again but change the value of label **kind** to **db**. Notice, this time _kubectl_ doesn't return any pods because there are no pods that match the label **kind** and a value of **db**.
+3. To prove that this works as expected, run the command again but change the value of label **kind** to **db**. Notice, this time _kubectl_ doesn't return any pods because there are no pods that match the label **kind** and a value of **db**.
 
 ```PowerShell
 kubectl get pod -l kind=db
@@ -224,7 +224,7 @@ kubectl get pods nginx-pod -o yaml > mypod.yaml
 
 > To view the JSON version, use the **-o json** flag instead.
 
-1. View the contents of the generated file in VS Code (or an editor of your choice).
+2. View the contents of the generated file in VS Code (or an editor of your choice).
 
 ```PowerShell
 code mypod.yaml
@@ -246,7 +246,7 @@ In this Exercise, you will create a pod that has labels associated with it. Labe
 kubectl label pod nginx-pod health=fair
 ```
 
-1. Run the command below to show the pod labels. Notice that now an additional label is shown with the pod.
+2. Run the command below to show the pod labels. Notice that now an additional label is shown with the pod.
 
 ```PowerShell
 kubectl get pods nginx-pod --show-labels
@@ -262,7 +262,7 @@ kubectl label pod nginx-pod kind=db --overwrite
 
 **--overwrite** is needed because the pod is running and won't accept changes otherwise.
 
-1. Show the pod labels again. Notice that _kind_ has changed from **web** to **db**.
+2. Show the pod labels again. Notice that _kind_ has changed from **web** to **db**.
 
 ```PowerShell
 kubectl get pods --show-labels
@@ -282,7 +282,7 @@ kubectl label pod nginx-pod health-
 kubectl label pod health- --all
 ```
 
-1. Run the command below to show the pod labels again. Notice that _health_ is not part of the list of labels.
+2. Run the command below to show the pod labels again. Notice that _health_ is not part of the list of labels.
 
 ```PowerShell
 kubectl get pods --show-labels
@@ -313,7 +313,7 @@ kubectl apply -f ng-svc.yaml
 
 > NOTE: The `--record` flag saves the command you applied in the deployment's ReplicaSet history. This helps in deciding which previous Revision to roll back to if needed.
 
-1. Run the following command to see the Pods, ReplicaSets, Deployments and Services that were created.
+2. Run the following command to see the Pods, ReplicaSets, Deployments and Services that were created.
 
 ```PowerShell
 kubectl get all --show-labels
@@ -331,7 +331,7 @@ kubectl get svc
 
 ![](content/services.png)
 
-1. When you see an **EXTERNAL-IP** assigned, open a browser with that address. Example: **http://20.81.24.216**
+2. When you see an **EXTERNAL-IP** assigned, open a browser with that address. Example: **http://20.81.24.216**
 
 ![](content/kube1.png)
 
@@ -345,15 +345,15 @@ You are now going to update the Deployment to use version **2.0** of the contain
 kubectl set image deployment ng-dep nginx=k8slab/nginx:2.0
 ```
 
-1. In the command above, **ng-dep** is the name of Deployment and **nginx** is the name of the container within the Pod template. The change will force the Deployment to create a new ReplicaSet with an image tagged **2.0**.
+2. In the command above, **ng-dep** is the name of Deployment and **nginx** is the name of the container within the Pod template. The change will force the Deployment to create a new ReplicaSet with an image tagged **2.0**.
 
-1. List all the pods and notice that old pods are terminating and that new Pods have been created.
+3. List all the pods and notice that old pods are terminating and that new Pods have been created.
 
 ```PowerShell
 kubectl get pods
 ```
 
-1. Run the follwing command to review the Deployment definition with the updated value of container image:
+4. Run the follwing command to review the Deployment definition with the updated value of container image:
 
 ```PowerShell
 kubectl describe deployment ng-dep
@@ -363,7 +363,7 @@ kubectl describe deployment ng-dep
 
 > Notice the Image section (under Containers) shows the value of container image as **2.0**.
 
-1. Run the command to view the Pods, ReplicaSets and Deployments again.
+5. Run the command to view the Pods, ReplicaSets and Deployments again.
 
 ```PowerShell
 kubectl get all
@@ -373,7 +373,7 @@ kubectl get all
 
 > Notice that the old replica set still exists, even though it has 0 Desired Pods.
 
-1. Run the `describe` command on that old ReplicaSet.
+6. Run the `describe` command on that old ReplicaSet.
 
 ```PowerShell
 kubectl describe rs <old replicaset name>
@@ -383,7 +383,7 @@ kubectl describe rs <old replicaset name>
 
 > Notice that the old definition still has the previous version number. This is maintained so you can roll back the change to that version if you which.
 
-1. Access the 2.0 version of application by refreshing the browser at the same address as above.
+7. Access the 2.0 version of application by refreshing the browser at the same address as above.
 
 ![](content/kube2.png)
 
@@ -397,13 +397,13 @@ The purpose of maintaining the previous **ReplicaSet** is to be able to rollback
 kubectl rollout history deploy/ng-dep
 ```
 
-1. Rollback the Deployment to the previous version.
+2. Rollback the Deployment to the previous version.
 
 ```PowerShell
 kubectl rollout undo deploy/ng-dep
 ```
 
-1. Wait a few seconds and refresh the browser again.
+3. Wait a few seconds and refresh the browser again.
 
 ![](content/kube1.png)
 
@@ -432,9 +432,9 @@ In this Exercise you will create a simple Service. Services help you expose Pods
 kubectl apply -f sample-dep.yaml
 ```
 
-1. The **sample-svc.yaml** file contains a Service manifest. Services use label selectors to determine which Pods it needs to track and forward the traffic to.
+2. The **sample-svc.yaml** file contains a Service manifest. Services use label selectors to determine which Pods it needs to track and forward the traffic to.
 
-1. Review running Pods and their labels.
+3. Review running Pods and their labels.
 
 ```PowerShell
 kubectl get pods --show-labels
@@ -442,15 +442,15 @@ kubectl get pods --show-labels
 
 > Notice the label **sample=color** that is associated with the Pods.
 
-1. Open the **sample-svc.yaml** file and examine the **selector** attribute. Notice the **sample: color** selector. This Service will track all Pods that have a label **sample=color** and load balance traffic between them.
+4. Open the **sample-svc.yaml** file and examine the **selector** attribute. Notice the **sample: color** selector. This Service will track all Pods that have a label **sample=color** and load balance traffic between them.
 
-1. Create the Service.
+5. Create the Service.
 
 ```PowerShell
 kubectl apply -f sample-svc.yaml
 ```
 
-1. Check the of newly created service.
+6. Check the of newly created service.
 
 ```PowerShell
 kubectl get svc -o wide
@@ -464,7 +464,7 @@ The command above will display the details of all available services along with 
 
 ![](content/sample-svc.png)
 
-1. The website displays the Node IP/Pod IP address of the pod currently receiving the traffic through the service's load balancer. The page refreshes every 3 seconds and each request may be directed to a different pod, with a different IP address. This is the service's internal load balancer at work.
+2. The website displays the Node IP/Pod IP address of the pod currently receiving the traffic through the service's load balancer. The page refreshes every 3 seconds and each request may be directed to a different pod, with a different IP address. This is the service's internal load balancer at work.
 
 ### Task 3 - Delete the Deployment and Service
 
@@ -476,8 +476,8 @@ Deleting any Pod will simply tell Kubernetes that the Deployment is not in its _
 kubectl delete deployment sample-dep
 ```
 
-1. The Service is independent of the Pods it services, so it's not affected when the Deployment is deleted. Anyone trying to access the service's address will simply get a 404 error. If the Deployment is ever re-created, the Service will automatically start sending traffic to the new Pods.
-1. Delete the Service.
+2. The Service is independent of the Pods it services, so it's not affected when the Deployment is deleted. Anyone trying to access the service's address will simply get a 404 error. If the Deployment is ever re-created, the Service will automatically start sending traffic to the new Pods.
+3. Delete the Service.
 
 ```PowerShell
 kubectl delete service sample-svc

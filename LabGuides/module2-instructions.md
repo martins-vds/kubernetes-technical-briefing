@@ -4,21 +4,43 @@
 
 > Estimated Duration: 60 minutes
 
-## Module 2 Table of Contents
+- [Lab Module 2: Azure Kubernetes Service](#lab-module-2-azure-kubernetes-service)
+  - [Exercise: Create AKS Cluster Using Azure CLI](#exercise-create-aks-cluster-using-azure-cli)
+    - [Task 1 - Create variables resource group](#task-1---create-variables-resource-group)
+    - [Task 2 - Define variables and create resource group](#task-2---define-variables-and-create-resource-group)
+    - [Task 2 - Create a Virtual Network and a Subnet](#task-2---create-a-virtual-network-and-a-subnet)
+    - [Task 3 - Create a Log Analytics Workspace (if needed)](#task-3---create-a-log-analytics-workspace-if-needed)
+    - [Task 4 - Create an AKS Cluster with a System Node Pool](#task-4---create-an-aks-cluster-with-a-system-node-pool)
+    - [Task 5 - Create a Linux User Node Pool](#task-5---create-a-linux-user-node-pool)
+    - [Task 6 - Create a Windows User Node Pool](#task-6---create-a-windows-user-node-pool)
+    - [Task 7 - Adjust the Auto Scaler for the lab](#task-7---adjust-the-auto-scaler-for-the-lab)
+  - [Exercise: Create AKS Cluster Using Terraform](#exercise-create-aks-cluster-using-terraform)
+    - [Task 1 - Ensure resource names are unique](#task-1---ensure-resource-names-are-unique)
+    - [Task 2 - Go to the Main Terraform folder and Initialize It](#task-2---go-to-the-main-terraform-folder-and-initialize-it)
+    - [Task 3 - Create an Azure Resource Group](#task-3---create-an-azure-resource-group)
+    - [Task 4 - Create an Azure Container Registry](#task-4---create-an-azure-container-registry)
+    - [Task 5 - Create a Virtual Network and a Subnet](#task-5---create-a-virtual-network-and-a-subnet)
+    - [Task 6 - Create a Log Analytics Workspace](#task-6---create-a-log-analytics-workspace)
+    - [Task 7 - Create an AKS Cluster](#task-7---create-an-aks-cluster)
+    - [Task 8 - Create a Linux User Node Pool](#task-8---create-a-linux-user-node-pool)
+    - [Task 9 - Create a Windows User Node Pool](#task-9---create-a-windows-user-node-pool)
+    - [Task 10 - Create the Diagnostic Settings Module](#task-10---create-the-diagnostic-settings-module)
+    - [Task 11 - Create the Storage Account Module for the Diagnostic Settings](#task-11---create-the-storage-account-module-for-the-diagnostic-settings)
+    - [Task 12 - Adjust the Auto Scaler for the lab](#task-12---adjust-the-auto-scaler-for-the-lab)
+  - [Exercise: Deploying Workloads to Nodes](#exercise-deploying-workloads-to-nodes)
+    - [Task 1 - Deploy a simple workload with no Node Selector](#task-1---deploy-a-simple-workload-with-no-node-selector)
+  - [Exercise: Scaling Nodes to Meet Demand](#exercise-scaling-nodes-to-meet-demand)
+    - [Task 1 - Verify the names and number of current nodes](#task-1---verify-the-names-and-number-of-current-nodes)
+    - [Task 2 - Increase the number of replicas to trigger the Auto Scaler to scale up](#task-2---increase-the-number-of-replicas-to-trigger-the-auto-scaler-to-scale-up)
+    - [Task 3 - Reduce workload to trigger the Auto Scaler to scale down](#task-3---reduce-workload-to-trigger-the-auto-scaler-to-scale-down)
+  - [Exercise: Examine Container Insights](#exercise-examine-container-insights)
+    - [Task 1 - Review Container Insights](#task-1---review-container-insights)
+    - [Sample Kusto Queries for Container Insights](#sample-kusto-queries-for-container-insights)
+  - [Exercise: Cleanup Resources](#exercise-cleanup-resources)
+    - [Task 1 - Delete the cluster and its resources - Azure CLI](#task-1---delete-the-cluster-and-its-resources---azure-cli)
+    - [Task 2 - Delete the cluster and its resources - Terraform](#task-2---delete-the-cluster-and-its-resources---terraform)
 
-[Exercise: Create AKS Cluster Using Azure CLI](#exercise-create-aks-cluster-using-azure-cli)
-
-[Exercise: Create AKS Cluster Using Terraform](#exercise-create-aks-cluster-using-terraform)
-
-[Exercise: Deploying Workloads to Nodes](#exercise-deploying-workloads-to-nodes)
-
-[Exercise: Scaling Nodes to Meet Demand](#exercise-scaling-nodes-to-meet-demand)
-
-[Exercise: Examine Container Insights](#exercise-examine-container-insights)
-
-[Exercise: Cleanup Resources](#exercise-cleanup-resources)
-
-# Exercise: Create AKS Cluster Using Azure CLI
+## Exercise: Create AKS Cluster Using Azure CLI
 
 In this exercise you will create an AKS cluster using the Azure Command-line Interface (CLI).
 
@@ -59,7 +81,7 @@ az provider register --namespace Microsoft.ContainerService
 az provider register --namespace Microsoft.Kubernetes
 ```
 
-5. Open a browser and navigate to the Azure Portal: **_portal.azure.com_**
+5. Open a browser and navigate to the Azure Portal: **`portal.azure.com`**
 
 6. Search for and open the **Subscriptions** blade. Select your **Azure Pass - Sponsorship** subscription.
 
@@ -67,11 +89,11 @@ az provider register --namespace Microsoft.Kubernetes
 
 ![](content/azure-resources.png)
 
-8. Watch the progress of the registration process until all the providers listed above have been registered. Click the _Refresh_ button every few minutes to update the progess. Once everything has been registered, continue with the tasks in this lab.
+8. Watch the progress of the registration process until all the providers listed above have been registered. Click the `Refresh` button every few minutes to update the progess. Once everything has been registered, continue with the tasks in this lab.
 
 ### Task 2 - Define variables and create resource group
 
-1. Select the region closest to your location. Use '**eastus**' for United States workshops, '**westeurope**' for European workshops. Ask your instructor for other options in your region: @lab.DropDownList(region)[eastus,westus,canadacentral,westeurope,centralindia,australiaeast]
+1. Select the region closest to your location. Use '**eastus**' for United States workshops, '**westeurope**' for European workshops.
 
 2. Set your initials and define variables.
 
@@ -148,14 +170,13 @@ Write-Host "Default Subnet ID: $AKS_VNET_SUBNET_ID"
 $LOG_ANALYTICS_WORKSPACE_NAME="aks-$($INITIALS)-law"
 $LOG_ANALYTICS_WORKSPACE_RESOURCE_ID=$(az monitor log-analytics workspace create --resource-group $AKS_RESOURCE_GROUP --workspace-name $LOG_ANALYTICS_WORKSPACE_NAME --query id -o tsv)
 Write-Host "LAW Workspace Resource ID: $LOG_ANALYTICS_WORKSPACE_RESOURCE_ID"
-
 ```
 
 ### Task 4 - Create an AKS Cluster with a System Node Pool
 
 1. Use all the prior settings and resources to create the AKS cluster. This step will take 5-10 minutes to complete.
 
-**NOTE:** See Microsoft reference: https://docs.microsoft.com/en-us/cli/azure/aks?view=azure-cli-latest#az_aks_create
+> See Microsoft reference: <https://docs.microsoft.com/en-us/cli/azure/aks?view=azure-cli-latest#az_aks_create>
 
 ```PowerShell
 $AKS_NAME="aks-$($INITIALS)"
@@ -307,13 +328,9 @@ az aks update --resource-group $AKS_RESOURCE_GROUP `
                   skip-nodes-with-system-pods=true
 ```
 
-**NOTE:** Refer to this link for a complete description of the options available: [AKS Cluster Autoscaler](https://docs.microsoft.com/en-us/azure/aks/cluster-autoscaler)
+> Refer to this link for a complete description of the options available: [AKS Cluster Autoscaler](https://docs.microsoft.com/en-us/azure/aks/cluster-autoscaler)
 
-[Module 2 Table of Contents](#module-2-table-of-contents)
-
-[List of Modules](#modules-list)
-
-# Exercise: Create AKS Cluster Using Terraform
+## Exercise: Create AKS Cluster Using Terraform
 
 In this exercise you will create an AKS cluster using the Terraform utility by HashiCorp.
 
@@ -331,7 +348,7 @@ You should complete this exercise **OR** the [Exercise: Create AKS Cluster Using
 az login
 ```
 
-4. Define variables.
+3. Define variables.
 
 ```PowerShell
 $INITIALS="abc"
@@ -356,7 +373,7 @@ cd  C:\k8s\labs\Module2\Terraform\Main
 
 3. To initialize the Terraform directory it is necessary the **main.tf** file that is already created in the **Main** folder.
 
-```JavaScript
+```javascript
 # We strongly recommend using the required_providers block to set the
 # Azure Provider source and version being used
 terraform {
@@ -374,7 +391,7 @@ provider "azurerm" {
 }
 ```
 
-4. Open a Terminal in VS Code and initialize the Terraform directory.
+1. Open a Terminal in VS Code and initialize the Terraform directory.
 
 ```PowerShell
 terraform init
@@ -878,11 +895,7 @@ terraform plan
 terraform apply -auto-approve
 ```
 
-[Module 2 Table of Contents](#module-2-table-of-contents)
-
-[List of Modules](#modules-list)
-
-# Exercise: Deploying Workloads to Nodes
+## Exercise: Deploying Workloads to Nodes
 
 In this exercise you will deploy different pods to various node pools in your cluster.
 
@@ -894,7 +907,7 @@ In this exercise you will deploy different pods to various node pools in your cl
 cd  C:\k8s\labs\Module2
 ```
 
-2. Deploy a workload with 6 replicas and no _Node Selector_.
+2. Deploy a workload with 6 replicas and no `Node Selector`.
 
 ```PowerShell
 kubectl apply -f workload.yaml
@@ -908,7 +921,7 @@ kubectl get pods -o wide
 
 ![](content/pods1.png)
 
-**NOTE:** Notice some of the pods got created on the Linux nodes, while others got scheduled on the Windows nodes, and thus could not be run. The Linux image specified in the Deployment is not compatible with the Windows 2019 OS running on the Windows nodes.
+> Notice some of the pods got created on the Linux nodes, while others got scheduled on the Windows nodes, and thus could not be run. The Linux image specified in the Deployment is not compatible with the Windows 2019 OS running on the Windows nodes.
 
 4. Describe any of the failed pods to see the actual error.
 
@@ -918,7 +931,7 @@ kubectl describe pod <failed pod name>
 
 ![](content/describepodwin.png)
 
-**NOTE:** Without any guidance, the Kubernetes scheduler does its best to distribute workloads evenly across all the nodes that have available resources. It doesn't examine the contents of Deployments to confirm that their images are compatible with the nodes it selects.
+> Without any guidance, the Kubernetes scheduler does its best to distribute workloads evenly across all the nodes that have available resources. It doesn't examine the contents of Deployments to confirm that their images are compatible with the nodes it selects.
 
 5. Update the **workload.yaml** file to add the following node selector:
 
@@ -936,13 +949,13 @@ kubectl apply -f workload.yaml
 kubectl get pods -o wide
 ```
 
-**NOTE:** It will take a few seconds for the bad pods to be deleted, so they may show as **Terminated** for little some time.
+> It will take a few seconds for the bad pods to be deleted, so they may show as **Terminated** for little some time.
 
 ![](content/pods2.png)
 
 > Notice that all the pods are running now, but they're spread across both the system and user nodes. The reason for creating user nodes is to seprate your workloads from system utilities.
 
-7. Update the **workload.yaml** file to add an additional label "**kubernetes.azure.com/mode: user**" to the Node Selector. The final _nodeSelector_ section should look like this:
+7. Update the **workload.yaml** file to add an additional label "**kubernetes.azure.com/mode: user**" to the Node Selector. The final `nodeSelector` section should look like this:
 
 ```yaml
 nodeSelector:
@@ -961,11 +974,7 @@ kubectl get pods -o wide
 
 **PERFECT!**
 
-[Module 2 Table of Contents](#module-2-table-of-contents)
-
-[List of Modules](#modules-list)
-
-# Exercise: Scaling Nodes to Meet Demand
+## Exercise: Scaling Nodes to Meet Demand
 
 In this exercise you'll watch how the AKS Auto Scaler adjusts the number of nodes based on increased demand and then scales them back down when the load is reduced.
 
@@ -1015,7 +1024,7 @@ In a few minutes you'll see the number of nodes increase.
 
 ![](content/newnode.png)
 
-5. When the new nodes are in a **Ready** state, press _Ctrl-C_ to break out of the watch and return to the console.
+5. When the new nodes are in a **Ready** state, press `Ctrl-C` to break out of the watch and return to the console.
 6. Get a list of pods.
 
 ```PowerShell
@@ -1040,11 +1049,11 @@ kubectl delete deploy/workload
 kubectl get nodes -l="kubernetes.azure.com/mode=user,kubernetes.io/os=linux" -w
 ```
 
-**NOTE:** In a few minutes, two of the nodes will go into a **NotReady** state and then disappear. It will probably _NOT_ be both the new nodes that were created. The "victim" nodes are picked using an internal scale-in policy.
+> In a few minutes, two of the nodes will go into a **NotReady** state and then disappear. It will probably `NOT` be both the new nodes that were created. The "victim" nodes are picked using an internal scale-in policy.
 
 ![](content/nodenotready.png)
 
-**NOTE:** The cluster autoscaler may be unable to scale down if pods can't be deleted, such as in the following situations:
+> The cluster autoscaler may be unable to scale down if pods can't be deleted, such as in the following situations:
 
 - A pod is directly created and isn't backed by a controller object, such as a deployment or replica set.
 
@@ -1060,11 +1069,7 @@ kubectl get nodes -l="kubernetes.azure.com/mode=user,kubernetes.io/os=linux"
 
 ![](content/fewernodes.png)
 
-[Module 2 Table of Contents](#module-2-table-of-contents)
-
-[List of Modules](#modules-list)
-
-# Exercise: Examine Container Insights
+## Exercise: Examine Container Insights
 
 Now that you've used your cluster for a little while, you should have some metrics and logs in Container Insights to review.
 
@@ -1102,13 +1107,9 @@ You'll see how the container logs are sent to a Log Analytics Workspace for anal
 
 The link below list some common Kusto queries for Container Insights data:
 
-https://docs.microsoft.com/en-us/azure/azure-monitor/containers/container-insights-log-query
+<https://docs.microsoft.com/en-us/azure/azure-monitor/containers/container-insights-log-query>
 
-[Module 2 Table of Contents](#module-2-table-of-contents)
-
-[List of Modules](#modules-list)
-
-# Exercise: Cleanup Resources
+## Exercise: Cleanup Resources
 
 ### Task 1 - Delete the cluster and its resources - Azure CLI
 
@@ -1136,7 +1137,7 @@ az monitor log-analytics workspace delete --resource-group $AKS_RESOURCE_GROUP -
 az network vnet delete --resource-group $AKS_RESOURCE_GROUP --name $AKS_VNET
 ```
 
-**HINT: You could go through and delete individual resources above or you could delete the ENTIRE resource group, which will delete everything in it. Only do this if you place to recreate all the supporting resources**
+> You could go through and delete individual resources above or you could delete the ENTIRE resource group, which will delete everything in it. Only do this if you place to recreate all the supporting resources
 
 5. Delete the entire resource group
 
@@ -1151,5 +1152,3 @@ az group delete --resource-group $AKS_RESOURCE_GROUP
 ```PowerShell
 terraform destroy -auto-approve
 ```
-
-[List of Modules](#modules-list)
